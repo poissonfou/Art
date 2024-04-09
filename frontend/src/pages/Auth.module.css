@@ -1,0 +1,11 @@
+.main_login {
+  display: flex;
+  justify-content: center;
+  margin-top: 7em;
+}
+
+.main_signup {
+  display: flex;
+  justify-content: center;
+  margin-top: 5em;
+}

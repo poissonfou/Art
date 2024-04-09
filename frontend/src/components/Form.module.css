@@ -1,0 +1,64 @@
+.login_form {
+  background-color: rgba(8, 8, 8, 0.5);
+  padding: 1.5em;
+  width: 30em;
+  border-radius: 3px;
+}
+
+.login_form h1 {
+  margin: 0;
+  color: white;
+}
+
+.login_form div {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.login_form div input {
+  padding: 0.5em;
+  border-radius: 4px;
+  border: none;
+  margin-right: 1em;
+  font-size: 1.2rem;
+}
+
+.login_form p {
+  color: white;
+}
+
+.login_form p a {
+  margin-left: 0.3em;
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.login_form button {
+  margin-top: 1em;
+  padding: 0.5em 1em;
+  font-size: 1.3rem;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  background: rgb(15, 13, 13);
+  margin-right: 2em;
+}
+
+.login_form button:hover {
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  cursor: pointer;
+}

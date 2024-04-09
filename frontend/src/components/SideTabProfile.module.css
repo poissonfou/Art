@@ -1,0 +1,82 @@
+.profile_tab {
+  position: absolute;
+  left: 0;
+  top: 5.2em;
+  background-color: rgb(15, 13, 13);
+  width: 15em;
+  height: 100vh;
+  z-index: 5;
+  transform: translateX(-17em);
+  color: white;
+  padding: 1em;
+  transition: transform 1s;
+}
+
+.profile_tab p:first-child,
+.profile_tab p:nth-child(2) {
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.profile_tab button {
+  padding: 0.5em 1em;
+  font-size: 1rem;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  background: rgb(15, 13, 13);
+  transition: background-color 1s;
+  margin-right: 2em;
+}
+
+.profile_tab button:hover {
+  background: rgb(131, 58, 180);
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  cursor: pointer;
+  transition: 1s;
+}
+
+.mini_profile {
+  position: absolute;
+  left: 11em;
+  background-color: rgb(15, 13, 13);
+  padding: 0.5em;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-size: 1.5rem;
+}
+
+.mini_profile:hover {
+  cursor: pointer;
+}
+
+.profile_tab .mini_profile p {
+  color: white;
+  padding: 0.5em 0.8em;
+  border-radius: 50%;
+  background: rgb(131, 58, 180);
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  margin: 0;
+  -webkit-text-fill-color: unset;
+}
+
+.show {
+  transform: translateX(0em);
+  transition: transform 1s;
+}

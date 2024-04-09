@@ -1,0 +1,71 @@
+.main_home {
+  margin-top: 10em;
+}
+
+.main_home h1 {
+  color: white;
+  font-family: "Geologica", sans-serif;
+  text-align: center;
+  font-size: 4em;
+}
+
+.main_home h1 span {
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.paintings {
+  display: flex;
+  padding: 2em 0em;
+  width: 100%;
+}
+
+.paintings div {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  height: 30em;
+  width: 20em;
+  object-fit: cover;
+  border: solid rgb(15, 13, 13);
+}
+
+.paintings div:hover {
+  cursor: pointer;
+}
+
+.paintings div img {
+  width: inherit;
+  height: inherit;
+  transform: scale(1.2);
+  object-fit: cover;
+  transition: transform 1s;
+  border-radius: 3px;
+}
+
+.paintings div img:hover {
+  transform: scale(1);
+  transition: transform 1s;
+}
+
+.img_one {
+  margin-top: 2em;
+}
+
+.img_two {
+  margin-bottom: 3em;
+}
+
+.img_three {
+  margin-top: 3em;
+}
+
+.img_four {
+  margin-top: 1em;
+}

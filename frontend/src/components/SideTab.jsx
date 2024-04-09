@@ -19,6 +19,9 @@ function SideTab({
   const [queries] = useSearchParams();
   let loggedIn = queries.get("loggedIn");
 
+  let fileChunks = url.split("/");
+  let fileName = fileChunks[fileChunks.length - 1];
+
   async function savePainting(paintingId) {
     if (loggedIn == "false") {
       navigate("/auth?mode=login");
@@ -37,11 +40,8 @@ function SideTab({
     );
 
     if (!response.ok) {
-      console.log(await response.json());
       return;
     }
-
-    console.log(await response.json());
   }
 
   return (
@@ -55,14 +55,19 @@ function SideTab({
       <img src={url} alt={name} />
       <div className={classes.info_actions}>
         <div>
-          <button>
-            <span className="material-symbols-outlined">download</span>
-          </button>
+          <a
+            href={`http://localhost:3000/imgs/download/` + fileName}
+            download={fileName}
+          >
+            <button>
+              <span className="material-symbols-outlined">download</span>
+            </button>
+          </a>
           <button onClick={() => savePainting(paintingId)}>
             <span className="material-symbols-outlined">bookmark_add</span>
           </button>
         </div>
-        <div>
+        <div className={classes.info}>
           <p>{`${originalName} | ${year} (${name})`}</p>
           <p>{`${author} | ${country}`}</p>
           <a href={source}>Learn more.</a>

@@ -21,9 +21,16 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/imgs/:name", (req, res) => {
+app.get("/imgs/:name", (req, res, next) => {
   let name = req.params.name;
   res.sendFile(path.join(__dirname, "imgs", name));
+});
+
+app.get("/imgs/download/:name", (req, res) => {
+  let name = req.params.name;
+  let path_ = path.join(__dirname, "imgs", name);
+  res.setHeader("Content-Disposition", `attachment; filename=${name}`);
+  res.download(path_, name);
 });
 
 app.use("/paintings", paintingsRoutes);

@@ -3,7 +3,8 @@ import { useState } from "react";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
-import classes from "./Board.module.css";
+
+import classes from "./Profile.module.css";
 
 let detailsInitial = {
   set: false,
@@ -17,9 +18,10 @@ let detailsInitial = {
   id: "",
 };
 
-function Board() {
+function Profile() {
+  const paintingsLoader = useLoaderData();
   const [details, setDetails] = useState(detailsInitial);
-  const paintings = useLoaderData();
+  const [paintings, setPaintings] = useState(paintingsLoader);
 
   function moveDisplay(event) {
     let display = document.getElementById("display");
@@ -77,50 +79,63 @@ function Board() {
       return newState;
     });
   }
+
   return (
-    <main className={classes.main}>
-      {localStorage.getItem("token") !== "null" && <SideTabProfile />}
-      <div
-        className={classes.main_board}
-        onMouseMove={moveDisplay}
-        id="display"
-      >
-        {paintings.map((painting, index) => {
-          return (
-            <div
-              className={classes.img}
-              key={index}
-              onClick={() => getDetails(painting)}
-            >
-              <img src={painting.url} alt="paintings" id={painting._id} />
-            </div>
-          );
-        })}
+    <main className={classes.container}>
+      <SideTabProfile className={classes.profile_tab} />
+      <div className={classes.main}>
+        <div
+          className={classes.main_board}
+          onMouseMove={moveDisplay}
+          id="display"
+        >
+          {paintings.map((painting, index) => {
+            return (
+              <div
+                className={classes.img}
+                key={index}
+                onClick={() => getDetails(painting)}
+              >
+                <img src={painting.url} alt="paintings" id={painting._id} />
+              </div>
+            );
+          })}
+        </div>
+        <SideTab
+          show={details.set}
+          url={details.url}
+          name={details.name}
+          originalName={details.originalName}
+          year={details.year}
+          artistsProp={details.artists}
+          country={details.country}
+          source={details.source}
+          paintingId={details.id}
+          closeTab={closeTab}
+          updatedBoard={setPaintings}
+        />
       </div>
-      <SideTab
-        show={details.set}
-        url={details.url}
-        name={details.name}
-        originalName={details.originalName}
-        year={details.year}
-        artistsProp={details.artists}
-        country={details.country}
-        source={details.source}
-        paintingId={details.id}
-        closeTab={closeTab}
-      />
     </main>
   );
 }
 
-export default Board;
+export default Profile;
 
 export async function loader() {
-  const data = await fetch("http://localhost:3000/paintings");
+  let token = localStorage.getItem("token");
 
-  if (!data.ok) return alert("Error");
+  let data = await fetch("http://localhost:3000/paintings/user", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  let paintings = await data.json();
+  if (!data.ok) {
+    console.log(data);
+    return;
+  }
+
+  const paintings = await data.json();
 
   return paintings.paintings;
 }

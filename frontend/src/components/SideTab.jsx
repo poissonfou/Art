@@ -1,4 +1,4 @@
-import { useSearchParams, useNavigate, useLoaderData } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import classes from "./SideTab.module.css";
@@ -14,8 +14,11 @@ function SideTab({
   show,
   closeTab,
   paintingId,
+  updatedBoard,
 }) {
-  let artists = [artistsProp];
+  let route = useLocation();
+
+  let artists = artistsProp;
   let artistsNames = [];
 
   for (let i = 0; i < artists.length; i++) {
@@ -24,8 +27,6 @@ function SideTab({
 
   artistsNames = artistsNames.toString();
   artistsNames = artistsNames.replaceAll(",", ", ");
-
-  console.log(artists);
 
   const navigate = useNavigate();
 
@@ -95,6 +96,51 @@ function SideTab({
     });
   }
 
+  async function dropPainting(paintingId) {
+    let token = localStorage.getItem("token");
+
+    let response = await fetch(
+      "http://localhost:3000/paintings/" + paintingId,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.log(response);
+      return;
+    }
+
+    setSavedPaintings((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      delete newState[paintingId];
+      return newState;
+    });
+
+    console.log(route);
+
+    if (route.pathname == "/profile") {
+      let paintings = JSON.parse(JSON.stringify(savedPaintings));
+
+      delete paintings[paintingId];
+
+      paintings = Object.values(paintings);
+
+      updatedBoard((prevState) => {
+        let newState = JSON.parse(JSON.stringify(prevState));
+        newState = paintings;
+        return newState;
+      });
+
+      closeTab();
+    }
+
+    console.log(await response.json());
+  }
+
   return (
     <div className={`${classes.tab_container} ${show ? classes.show : ""}`}>
       <span
@@ -115,7 +161,7 @@ function SideTab({
             </button>
           </a>
           {savedPaintings[paintingId] ? (
-            <button>
+            <button onClick={() => dropPainting(paintingId)}>
               <span className="material-symbols-outlined">bookmark_added</span>
             </button>
           ) : (

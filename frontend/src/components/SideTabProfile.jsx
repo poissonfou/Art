@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import classes from "./SideTabProfile.module.css";
 
 let user = {
-  name: "ddd",
-  email: "ddd",
+  name: "",
+  email: "",
 };
 
 function SideTabProfile() {
   const [userInfo, setUserInfo] = useState(user);
   const [showTab, setShowTab] = useState(false);
+
   const navigate = useNavigate();
+  let route = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,12 +37,26 @@ function SideTabProfile() {
     navigate("/auth/update");
   }
 
+  function redirectProfile() {
+    navigate("/profile");
+  }
+
   return (
-    <div className={` ${classes.profile_tab} ${showTab ? classes.show : ""}`}>
+    <div
+      className={`${classes.profile_tab} ${
+        route.pathname == "/profile" ? classes.static : classes.absolute
+      } ${showTab ? classes.show : ""}`}
+    >
       <p>{userInfo.name}</p>
       <p>{userInfo.email}</p>
+      <button onClick={redirectProfile}>Profile</button>
       <button onClick={redirectUpdate}>Update Info</button>
-      <div className={classes.mini_profile} onClick={showProfile}>
+      <div
+        className={`${classes.mini_profile} ${
+          route.pathname == "/profile" ? classes.hidden : ""
+        }`}
+        onClick={showProfile}
+      >
         <p>{userInfo.name[0]}</p>
       </div>
       <div className={classes.author_info}>

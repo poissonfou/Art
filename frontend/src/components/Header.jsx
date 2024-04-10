@@ -13,6 +13,8 @@ function Header() {
   const [queries] = useSearchParams();
   let loggedIn = queries.get("loggedIn");
 
+  let userId = localStorage.getItem("id");
+
   function redirectBoard() {
     let token = localStorage.getItem("token");
     if (token == "null") {
@@ -29,7 +31,7 @@ function Header() {
       <div>
         <input type="text" placeholder="search" />
         <p onClick={redirectBoard}>Explore</p>
-        {!loggedIn || loggedIn == "false" ? (
+        {userId == "null" || !userId ? (
           <Link to="/auth?mode=login">
             <button>Login</button>
           </Link>

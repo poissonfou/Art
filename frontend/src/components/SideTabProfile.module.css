@@ -1,15 +1,22 @@
 .profile_tab {
-  position: absolute;
-  left: 0;
-  top: 5.2em;
   background-color: rgb(15, 13, 13);
   width: 15em;
   height: 100vh;
-  z-index: 5;
-  transform: translateX(-17em);
   color: white;
   padding: 1em;
+}
+
+.absolute {
+  position: absolute;
+  left: 0;
+  top: 5.2em;
+  transform: translateX(-17em);
   transition: transform 1s;
+  z-index: 5;
+}
+
+.static {
+  margin-top: 5.2em;
 }
 
 .profile_tab p:first-child,
@@ -90,4 +97,8 @@
 .show {
   transform: translateX(0em);
   transition: transform 1s;
+}
+
+.hidden {
+  display: none;
 }

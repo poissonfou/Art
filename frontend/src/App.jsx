@@ -11,6 +11,7 @@ import Layout from "./components/Layout";
 import Auth, { action as authActions } from "./pages/Auth";
 import Board, { loader as loaderBoard } from "./pages/Board";
 import UpdateInfo, { action as updateInfoAction } from "./pages/UpdateInfo";
+import Profile, { loader as loaderProfile } from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <Home />,
       },
       {
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
         path: "board",
         element: <Board />,
         loader: loaderBoard,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+        loader: loaderProfile,
       },
     ],
   },

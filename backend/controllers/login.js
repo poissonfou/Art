@@ -113,3 +113,50 @@ exports.signup = (req, res, next) => {
       next(err);
     });
 };
+
+exports.update = (req, res, next) => {
+  let name = req.body.name;
+  let password = req.body.password;
+  let id = req.body.id;
+  let currentUser;
+
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("User doesn't exist!");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      currentUser = user;
+      return bcrypt.compare(password, user.password);
+    })
+    .then((isEqual) => {
+      if (!isEqual && password !== "") {
+        return bcrypt.hash(password);
+      }
+      return "";
+    })
+    .then((hashedPassword) => {
+      if (hashedPassword !== "") {
+        currentUser.password = hashedPassword;
+      }
+      return User.findById(id);
+    })
+    .then((user) => {
+      if (name !== "") {
+        user.name = name;
+      }
+      if (password !== "") {
+        user.password = currentUser.password;
+      }
+      user.save();
+      res.json({ message: "Sucessfully updated" }).status(200);
+    })
+    .catch((err) => {
+      if (err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};

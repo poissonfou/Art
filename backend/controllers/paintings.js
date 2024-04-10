@@ -44,7 +44,15 @@ exports.savePaints = (req, res, next) => {
   let painting;
 
   paintings
-    .findById(paintingId)
+    .findById(paintingId, {
+      name: true,
+      originalName: true,
+      url: true,
+      year: true,
+      source: true,
+      artists: true,
+      period: true,
+    })
     .then((result) => {
       if (!result) {
         const error = new Error("Could not find .");
@@ -52,25 +60,20 @@ exports.savePaints = (req, res, next) => {
         throw error;
       }
       painting = result;
+      return user.findById(userId);
     })
-    .catch((err) => {
-      if (!err.statusCode) err.statusCode = 500;
-      next(err);
-    });
-
-  user
-    .findById(userId)
     .then((user) => {
       if (!user) {
         const error = new Error("Could not find user.");
         error.statusCode = 400;
         throw error;
       }
+
       user.paintings.push(painting);
       return user.save();
     })
-    .then((result) => {
-      res.json({ message: "Success", userUpdated: result }).status(201);
+    .then((user) => {
+      res.json({ message: "Success", userUpdated: user }).status(201);
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;
@@ -104,6 +107,32 @@ exports.deletePaintings = (req, res) => {
     })
     .then((result) => {
       res.json({ message: "Success", userUpdated: result }).status(201);
+    })
+    .catch((err) => {
+      if (!err.statusCode) err.statusCode = 500;
+      next(err);
+    });
+};
+
+exports.getUserPaintings = (req, res, next) => {
+  let userId = req.userId;
+
+  user
+    .findById(userId)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Could not find user.");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      return user.populate("paintings");
+    })
+    .then((user) => {
+      res.json({
+        message: "Succssfuly retrieved paintings.",
+        paintings: user.paintings,
+      });
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;

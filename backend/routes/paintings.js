@@ -5,6 +5,8 @@ const auth = require("../middleware/auth");
 
 router.get("/", paintingsController.getPaintings);
 
+router.get("/user", auth, paintingsController.getUserPaintings);
+
 router.get("/:paintingId", paintingsController.getPainting);
 
 router.post("/:paintingId", auth, paintingsController.savePaints);

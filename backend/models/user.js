@@ -17,7 +17,7 @@ const userSchema = new Schema({
   paintings: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Artists",
+      ref: "Paintings",
     },
   ],
 });

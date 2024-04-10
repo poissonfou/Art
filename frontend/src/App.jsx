@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import Auth, { action as authActions } from "./pages/Auth";
 import Board, { loader as loaderBoard } from "./pages/Board";
+import UpdateInfo, { action as updateInfoAction } from "./pages/UpdateInfo";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +23,18 @@ const router = createBrowserRouter([
       },
       {
         path: "auth",
-        element: <Auth />,
-        action: authActions,
+        children: [
+          {
+            index: true,
+            element: <Auth />,
+            action: authActions,
+          },
+          {
+            path: "update",
+            element: <UpdateInfo />,
+            action: updateInfoAction,
+          },
+        ],
       },
       {
         path: "board",

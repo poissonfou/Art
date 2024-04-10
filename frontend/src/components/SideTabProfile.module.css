@@ -61,7 +61,7 @@
   cursor: pointer;
 }
 
-.profile_tab .mini_profile p {
+.profile_tab .mini_profile p:first-child {
   color: white;
   padding: 0.5em 0.8em;
   border-radius: 50%;
@@ -74,6 +74,17 @@
   );
   margin: 0;
   -webkit-text-fill-color: unset;
+}
+
+.profile_tab .author_info {
+  position: absolute;
+  bottom: 9em;
+}
+
+.profile_tab .author_info i {
+  font-size: 1.5rem;
+  color: white;
+  margin-right: 0.5em;
 }
 
 .show {

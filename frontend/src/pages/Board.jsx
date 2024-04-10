@@ -103,7 +103,7 @@ function Board() {
         name={details.name}
         originalName={details.originalName}
         year={details.year}
-        author={details.artists}
+        artistsProp={details.artists}
         country={details.country}
         source={details.source}
         paintingId={details.id}

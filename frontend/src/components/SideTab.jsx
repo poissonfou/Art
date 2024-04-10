@@ -8,13 +8,25 @@ function SideTab({
   name,
   originalName,
   year,
-  author,
+  artistsProp,
   country,
   source,
   show,
   closeTab,
   paintingId,
 }) {
+  let artists = [artistsProp];
+  let artistsNames = [];
+
+  for (let i = 0; i < artists.length; i++) {
+    artistsNames.push(artists[i].name);
+  }
+
+  artistsNames = artistsNames.toString();
+  artistsNames = artistsNames.replaceAll(",", ", ");
+
+  console.log(artists);
+
   const navigate = useNavigate();
 
   const [savedPaintings, setSavedPaintings] = useState({});
@@ -57,6 +69,8 @@ function SideTab({
     if (loggedIn == "false") {
       navigate("/auth?mode=login");
     }
+
+    if (savedPaintings[paintingId]) return;
 
     let token = localStorage.getItem("token");
 
@@ -112,7 +126,7 @@ function SideTab({
         </div>
         <div className={classes.info}>
           <p>{`${originalName} | ${year} (${name})`}</p>
-          <p>{`${author} | ${country}`}</p>
+          <p>{`${artistsNames} | ${country}`}</p>
           <a href={source}>Learn more.</a>
         </div>
       </div>

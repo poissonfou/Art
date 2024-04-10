@@ -43,6 +43,7 @@ function UpdateInfo() {
           <label htmlFor="reconfirm">Reconfirm password</label>
           <input type="text" name="reconfirm" />
         </div>
+        <p>Enter only the info you wish to change.</p>
         <button type="submit">Update</button>
       </Form>
     </main>

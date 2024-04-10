@@ -23,32 +23,6 @@ function Profile() {
   const [details, setDetails] = useState(detailsInitial);
   const [paintings, setPaintings] = useState(paintingsLoader);
 
-  function moveDisplay(event) {
-    let display = document.getElementById("display");
-    let x = event.clientX;
-    let y = event.clientY;
-
-    let xDecimal = x / window.innerWidth;
-    let yDecimal = y / window.innerHeight;
-
-    let maxX = display.offsetWidth - window.innerWidth;
-    let maxY = display.offsetHeight - window.innerHeight;
-
-    const panX = maxX * xDecimal * -1;
-    const panY = maxY * yDecimal * -1;
-
-    display.animate(
-      {
-        transform: `translate(${panX}px, ${panY}px)`,
-      },
-      {
-        duration: 4000,
-        fill: "forwards",
-        easing: "ease",
-      }
-    );
-  }
-
   function getDetails(info) {
     setDetails((prevDetails) => {
       let newState = JSON.parse(JSON.stringify(prevDetails));
@@ -84,11 +58,7 @@ function Profile() {
     <main className={classes.container}>
       <SideTabProfile className={classes.profile_tab} />
       <div className={classes.main}>
-        <div
-          className={classes.main_board}
-          onMouseMove={moveDisplay}
-          id="display"
-        >
+        <div className={classes.main_board} id="display">
           {paintings.map((painting, index) => {
             return (
               <div
@@ -101,20 +71,20 @@ function Profile() {
             );
           })}
         </div>
-        <SideTab
-          show={details.set}
-          url={details.url}
-          name={details.name}
-          originalName={details.originalName}
-          year={details.year}
-          artistsProp={details.artists}
-          country={details.country}
-          source={details.source}
-          paintingId={details.id}
-          closeTab={closeTab}
-          updatedBoard={setPaintings}
-        />
       </div>
+      <SideTab
+        show={details.set}
+        url={details.url}
+        name={details.name}
+        originalName={details.originalName}
+        year={details.year}
+        artistsProp={details.artists}
+        country={details.country}
+        source={details.source}
+        paintingId={details.id}
+        closeTab={closeTab}
+        updatedBoard={setPaintings}
+      />
     </main>
   );
 }

@@ -3,19 +3,30 @@
 }
 
 .main {
-  padding-top: 5em;
-  margin-top: 10em;
-  width: 100%;
-  height: 130vh;
-  overflow: hidden;
+  padding: 1em;
+  margin-top: 5em;
+  height: 30em;
+  width: 49%;
+  background-color: rgb(15, 13, 13);
+  overflow-y: scroll;
+}
+
+.main::-webkit-scrollbar {
+  width: 10px;
+  display: block;
+}
+
+.main::-webkit-scrollbar-track {
+  background-color: rgb(15, 13, 13);
+}
+
+.main::-webkit-scrollbar-thumb {
+  background: #242323;
+  border-radius: 5px;
 }
 
 .main_board {
-  position: relative;
-  /* background-color: rgba(232, 233, 229, 0.212); */
   width: 100%;
-  height: 150vh;
-  overflow: hidden;
 }
 
 .img {
@@ -23,8 +34,8 @@
   width: 100%;
   overflow: hidden;
   border-radius: 3px;
-  height: 20em;
-  width: 15em;
+  height: 18em;
+  width: 13em;
   object-fit: cover;
   border: solid rgb(15, 13, 13);
 }
@@ -42,8 +53,4 @@
   transform: scale(1);
   transition: transform 1s;
   cursor: pointer;
-}
-
-.profile_tab {
-  position: static;
 }

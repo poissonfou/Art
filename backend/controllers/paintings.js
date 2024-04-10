@@ -4,12 +4,17 @@ const user = require("../models/user");
 exports.getPaintings = (req, res, next) => {
   paintings
     .find()
+    .populate("artists")
     .then((paintings) => {
       if (!paintings) {
         const error = new Error("Could not get paintings.");
         error.statusCode = 400;
         throw error;
       }
+
+      return paintings;
+    })
+    .then((paintings) => {
       res.json({ message: "Success", paintings: paintings });
     })
     .catch((err) => {
@@ -129,8 +134,11 @@ exports.getUserPaintings = (req, res, next) => {
       return user.populate("paintings");
     })
     .then((user) => {
+      return user.populate("paintings.artists");
+    })
+    .then((user) => {
       res.json({
-        message: "Succssfuly retrieved paintings.",
+        message: "Successfuly retrieved paintings.",
         paintings: user.paintings,
       });
     })

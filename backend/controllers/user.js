@@ -39,7 +39,7 @@ exports.login = (req, res, next) => {
           userId: currentUser._id.toString(),
         },
         "secret283917",
-        { expiresIn: "1h" }
+        { expiresIn: "3h" }
       );
       res.json({ token, userId: currentUser._id.toString() });
     })

@@ -142,7 +142,11 @@ function SideTab({
   }
 
   return (
-    <div className={`${classes.tab_container} ${show ? classes.show : ""}`}>
+    <div
+      className={`${classes.tab_container} ${
+        route.pathname == "/profile" ? classes.static : classes.absolute
+      } ${show ? classes.show : ""}`}
+    >
       <span
         className={`${"material-symbols-outlined"} ${classes.close}`}
         onClick={closeTab}

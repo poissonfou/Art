@@ -1,7 +1,7 @@
 .profile_tab {
   background-color: rgb(15, 13, 13);
   width: 15em;
-  height: 100vh;
+  height: 31.1em;
   color: white;
   padding: 1em;
 }
@@ -16,7 +16,7 @@
 }
 
 .static {
-  margin-top: 5.2em;
+  margin-top: 4.7em;
 }
 
 .profile_tab p:first-child,
@@ -85,7 +85,7 @@
 
 .profile_tab .author_info {
   position: absolute;
-  bottom: 9em;
+  bottom: 0.5em;
 }
 
 .profile_tab .author_info i {

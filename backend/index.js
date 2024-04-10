@@ -6,7 +6,7 @@ const app = express();
 const paintingsRoutes = require("./routes/paintings");
 const artistsRoutes = require("./routes/artists");
 const searchRoutes = require("./routes/search");
-const loginRoutes = require("./routes/login");
+const loginRoutes = require("./routes/user");
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "imgs")));

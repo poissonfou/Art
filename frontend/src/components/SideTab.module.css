@@ -1,28 +1,56 @@
 .tab_container {
-  position: absolute;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  width: 30em;
-  top: 5.2em;
-  right: 0em;
-  transform: translateX(29em);
+  height: 31em;
+  width: 22em;
+  transform: translateX(32em);
   background-color: rgb(15, 13, 13);
-  z-index: 5;
   color: white;
-  padding: 1em;
+  padding: 1em 1.2em;
   transition: transform 1s;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.tab_container::-webkit-scrollbar {
+  width: 10px;
+  display: block;
+}
+
+.tab_container::-webkit-scrollbar-track {
+  background-color: rgb(15, 13, 13);
+}
+
+.tab_container::-webkit-scrollbar-thumb {
+  background: #242323;
+  border-radius: 5px;
+}
+
+.absolute {
+  position: absolute;
+  z-index: 5;
+  top: 5.5em;
+  right: 0em;
+}
+
+.static {
+  margin-top: 5em;
 }
 
 .close {
-  margin-left: -10em;
+  margin-left: -0.5em;
   margin-top: -0.5em;
   font-size: 2.5rem;
+  color: white;
 }
 
 .close:hover {
   cursor: pointer;
+}
+
+.info,
+.info_actions {
+  width: 22em;
 }
 
 .tab_container p:nth-child(2) {
@@ -30,8 +58,8 @@
 }
 
 .tab_container img {
-  width: 25em;
-  height: 20em;
+  width: 20em;
+  height: 21em;
   object-fit: cover;
   border: solid 1px white;
   border-radius: 3px;

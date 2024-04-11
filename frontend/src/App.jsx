@@ -11,7 +11,10 @@ import Layout from "./components/Layout";
 import Auth, { action as authActions } from "./pages/Auth";
 import Board, { loader as loaderBoard } from "./pages/Board";
 import UpdateInfo, { action as updateInfoAction } from "./pages/UpdateInfo";
-import Profile, { loader as loaderProfile } from "./pages/Profile";
+import Profile, {
+  loader as loaderProfile,
+  action as actionProfile,
+} from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +49,7 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
         loader: loaderProfile,
+        action: actionProfile,
       },
     ],
   },

@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
+import Form from "../components/Form";
 
 import classes from "./Profile.module.css";
 
@@ -18,10 +19,15 @@ let detailsInitial = {
   id: "",
 };
 
+let paintingsCopy = {};
+
 function Profile() {
-  const paintingsLoader = useLoaderData();
+  const { paintings, collections } = useLoaderData();
+
   const [details, setDetails] = useState(detailsInitial);
-  const [paintings, setPaintings] = useState(paintingsLoader);
+  const [paintingsState, setPaintingsState] = useState(paintings);
+  const [selectedPainting, setSelectedPainting] = useState({});
+  const [showForm, setShowForm] = useState(false);
 
   function getDetails(info) {
     setDetails((prevDetails) => {
@@ -54,22 +60,75 @@ function Profile() {
     });
   }
 
+  function selectPainting(painting) {
+    setSelectedPainting((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState[painting._id] = painting;
+      paintingsCopy[painting._id] = painting;
+      return newState;
+    });
+  }
+
+  function changeShowForm() {
+    setShowForm((prevState) => !prevState);
+    setSelectedPainting((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState = {};
+      return newState;
+    });
+  }
+
   return (
     <main className={classes.container}>
       <SideTabProfile className={classes.profile_tab} />
-      <div className={classes.main}>
-        <div className={classes.main_board} id="display">
-          {paintings.map((painting, index) => {
+      <div className={classes.middle_section}>
+        <div className={classes.collections}>
+          {collections.map((collection, index) => {
             return (
-              <div
-                className={classes.img}
-                key={index}
-                onClick={() => getDetails(painting)}
-              >
-                <img src={painting.url} alt="paintings" id={painting._id} />
+              <div className={classes.collection_item} key={index}>
+                <img src={collection.paintings[0].url} alt="collection cover" />
+                <p>{collection.name}</p>
               </div>
             );
           })}
+          <span
+            className={`${"material-symbols-outlined"} ${classes.add}`}
+            onClick={changeShowForm}
+          >
+            add
+          </span>
+        </div>
+        <div className={classes.main}>
+          {showForm && (
+            <Form>
+              <div>
+                <label htmlFor="name">Name</label>
+                <input type="text" name="name" />
+              </div>
+              <button>Create</button>
+            </Form>
+          )}
+          <div className={classes.main_board} id="display">
+            {paintingsState.map((painting, index) => {
+              return (
+                <div
+                  className={`${classes.img} ${
+                    showForm && selectedPainting[painting._id]
+                      ? classes.selected
+                      : classes.border
+                  }`}
+                  key={index}
+                  onClick={
+                    !showForm
+                      ? () => getDetails(painting)
+                      : () => selectPainting(painting)
+                  }
+                >
+                  <img src={painting.url} alt="paintings" id={painting._id} />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
       <SideTab
@@ -83,7 +142,7 @@ function Profile() {
         source={details.source}
         paintingId={details.id}
         closeTab={closeTab}
-        updatedBoard={setPaintings}
+        updatedBoard={setPaintingsState}
       />
     </main>
   );
@@ -94,18 +153,61 @@ export default Profile;
 export async function loader() {
   let token = localStorage.getItem("token");
 
-  let data = await fetch("http://localhost:3000/paintings/user", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  let [painting, collections] = await Promise.all([
+    fetch("http://localhost:3000/paintings/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((paintings) => paintings.json()),
+    fetch("http://localhost:3000/user/collections", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: "application/json",
+      },
+    }).then((collections) => collections.json()),
+  ]);
 
-  if (!data.ok) {
-    console.log(data);
+  return {
+    paintings: painting.paintings,
+    collections: collections.collections,
+  };
+}
+
+export async function action({ request }) {
+  let token = localStorage.getItem("token");
+  let data = await request.formData();
+  let name = data.get("name");
+
+  if (name == "") {
     return;
   }
 
-  const paintings = await data.json();
+  let paintings = Object.values(paintingsCopy);
 
-  return paintings.paintings;
+  const formData = {
+    collection: {
+      name,
+      paintings,
+    },
+  };
+
+  let response = await fetch("http://localhost:3000/user/collections", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    return;
+  }
+
+  let collections = await response.json();
+
+  console.log(collections);
+  paintingsCopy = {};
+  return window.location.reload();
 }

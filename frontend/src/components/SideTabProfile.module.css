@@ -1,6 +1,6 @@
 .profile_tab {
   background-color: rgb(15, 13, 13);
-  width: 15em;
+  width: 14em;
   height: 31.1em;
   color: white;
   padding: 1em;
@@ -56,9 +56,10 @@
 
 .mini_profile {
   position: absolute;
-  left: 11em;
+  left: 10em;
   background-color: rgb(15, 13, 13);
   padding: 0.5em;
+  padding-left: 1.5em;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   font-size: 1.5rem;

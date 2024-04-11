@@ -14,6 +14,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  collections: [
+    {
+      type: Object,
+      required: true,
+    },
+  ],
   paintings: [
     {
       type: Schema.Types.ObjectId,

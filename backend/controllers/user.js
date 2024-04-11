@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
+const user = require("../models/user");
 
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
@@ -100,6 +101,7 @@ exports.signup = (req, res, next) => {
         name,
         email,
         password: hashedPassword,
+        collections: [],
       });
       return newUser.save();
     })
@@ -155,6 +157,134 @@ exports.update = (req, res, next) => {
     })
     .catch((err) => {
       if (err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.collection = (req, res, next) => {
+  let id = req.userId;
+  let collectionName = req.body.name;
+  let collection;
+
+  user
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Couln't get user.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      for (let i = 0; i < user.collections.length; i++) {
+        if (user.collections[i].name == collectionName) {
+          collection = user.collections[i];
+        }
+      }
+
+      if (!collection) {
+        const error = new Error("Couln't get collection.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      res.json({ message: "Success", collection: collection });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.addCollection = (req, res, next) => {
+  let id = req.userId;
+  let name = req.body.name;
+  let collectionUpdate = req.body.collection;
+  let updated = false;
+
+  user
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Couln't get user.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      for (let i = 0; i < user.collections.length; i++) {
+        if (user.collections[i].name == name) {
+          user.collections[i] == collectionUpdate;
+          updated = true;
+          break;
+        }
+      }
+
+      if (!updated) {
+        const error = new Error("Couldn't find collection");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      return user.save();
+    })
+    .then((user) => {
+      res
+        .json({ message: "Success", collections: user.collections })
+        .status(200);
+    })
+    .catch((err) => {
+      if (err.statusCode) err.statusCode = 500;
+      next(err);
+    });
+};
+
+exports.collections = (req, res, next) => {
+  const id = req.userId;
+
+  user
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Couln't get user.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      res
+        .json({ message: "Success", collections: user.collections })
+        .status(200);
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.addCollections = (req, res, next) => {
+  const id = req.userId;
+  let collection = req.body.collection;
+
+  user
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Couln't get user.");
+        error.statusCode = 401;
+        throw error;
+      }
+      user.collections.push(collection);
+      return user.save();
+    })
+    .then((user) => {
+      res.json({ message: "Success", collections: user.collections });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
         err.statusCode = 500;
       }
       next(err);

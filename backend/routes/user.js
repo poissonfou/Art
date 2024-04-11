@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 const router = require("express").Router();
-const loginControllers = require("../controllers/user");
+const userControllers = require("../controllers/user");
 const auth = require("../middleware/auth");
 
 router.post(
@@ -12,7 +12,7 @@ router.post(
       .normalizeEmail(),
     body("password").trim().isLength({ min: 5 }),
   ],
-  loginControllers.login
+  userControllers.login
 );
 
 router.post(
@@ -25,11 +25,19 @@ router.post(
     body("password").trim().isLength({ min: 5 }),
     body("name").trim().isString(),
   ],
-  loginControllers.signup
+  userControllers.signup
 );
 
-router.get("/:userId", loginControllers.getUser);
+router.post("/update", auth, userControllers.update);
 
-router.post("/update", auth, loginControllers.update);
+router.get("/collection", auth, userControllers.collection);
+
+router.post("/collection", auth, userControllers.addCollection);
+
+router.get("/collections", auth, userControllers.collections);
+
+router.post("/collections", auth, userControllers.addCollections);
+
+router.get("/:userId", userControllers.getUser);
 
 module.exports = router;

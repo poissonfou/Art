@@ -6,7 +6,7 @@ const app = express();
 const paintingsRoutes = require("./routes/paintings");
 const artistsRoutes = require("./routes/artists");
 const searchRoutes = require("./routes/search");
-const loginRoutes = require("./routes/user");
+const userRoutes = require("./routes/user");
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "imgs")));
@@ -36,7 +36,7 @@ app.get("/imgs/download/:name", (req, res) => {
 app.use("/paintings", paintingsRoutes);
 app.use("/artists", artistsRoutes);
 app.use("/search", searchRoutes);
-app.use("/user", loginRoutes);
+app.use("/user", userRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

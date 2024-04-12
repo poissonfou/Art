@@ -23,6 +23,7 @@ exports.getArtist = (req, res, next) => {
 
   artists
     .findById(id)
+    .populate("paintings")
     .then((artist) => {
       if (!artist) {
         const error = new Error("Could not find post.");

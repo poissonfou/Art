@@ -67,13 +67,6 @@ function Board() {
     setDetails((prevDetails) => {
       let newState = JSON.parse(JSON.stringify(prevDetails));
       newState.set = false;
-      newState.country = "";
-      newState.year = "";
-      newState.url = "";
-      newState.originalName = "";
-      newState.source = "";
-      newState.artists = "";
-      newState.name = "";
       return newState;
     });
   }

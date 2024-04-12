@@ -15,6 +15,7 @@ import Profile, {
   loader as loaderProfile,
   action as actionProfile,
 } from "./pages/Profile";
+import Search from './pages/Search';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
         loader: loaderProfile,
         action: actionProfile,
       },
+      {
+        path: 'search',
+        element: <Search />,
+      }
     ],
   },
 ]);

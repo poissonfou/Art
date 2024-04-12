@@ -1,0 +1,120 @@
+.search_display {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  height: 30em;
+  width: 55.5em;
+  background-color: rgb(15, 13, 13);
+  overflow-y: scroll;
+  margin-top: 4.5em;
+  padding-left: 0;
+  margin-left: 4em;
+}
+
+.search_display::-webkit-scrollbar {
+  width: 10px;
+  display: block;
+}
+
+.search_display::-webkit-scrollbar-track {
+  background-color: rgb(15, 13, 13);
+}
+
+.search_display::-webkit-scrollbar-thumb {
+  background: rgb(20, 20, 20);
+  border-radius: 5px;
+}
+
+.artists_display {
+  background-color: rgb(20, 20, 20);
+  border-radius: 3px;
+  padding: 0.5em;
+}
+
+.artists_display h1 {
+  color: white;
+  margin: 0;
+}
+
+.artists_display div {
+  background-color: rgb(15, 15, 15);
+  width: fit-content;
+  padding: 0.5em;
+  border-radius: 5px;
+}
+
+.artists_display div:hover {
+  cursor: pointer;
+}
+
+.artists_display div p {
+  color: white;
+  width: 8em;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.paintings_display {
+  display: flex;
+  margin-top: 1em;
+}
+
+.img {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  height: 18em;
+  width: 13em;
+  object-fit: cover;
+  border: solid rgb(15, 13, 13);
+}
+
+.img img {
+  width: inherit;
+  height: inherit;
+  transform: scale(1.2);
+  object-fit: cover;
+  transition: transform 1s;
+  border-radius: 3px;
+}
+
+.img img:hover {
+  transform: scale(1);
+  transition: transform 1s;
+  cursor: pointer;
+}
+
+.no_result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  margin: 0 auto;
+  margin-top: 13em;
+  padding: 2em;
+  border-radius: 5px;
+  background-color: rgb(17, 17, 17);
+  width: fit-content;
+}
+
+.no_result h1 {
+  font-size: 4rem;
+  margin: 0;
+  text-align: center;
+}
+
+.no_result span {
+  font-size: 5rem;
+  margin: 0 auto;
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

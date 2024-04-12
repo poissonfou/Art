@@ -28,6 +28,14 @@ const artistSchema = new Schema({
   period: {
     type: String,
   },
+  paintings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Paintings",
+    },
+  ],
 });
+
+artistSchema.index({ name: "text" });
 
 module.exports = mongoose.model("Artists", artistSchema);

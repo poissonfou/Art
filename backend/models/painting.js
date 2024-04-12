@@ -37,4 +37,6 @@ const paintingSchema = new Schema({
   ],
 });
 
+paintingSchema.index({ name: "text", originalName: "text" });
+
 module.exports = mongoose.model("Paintings", paintingSchema);

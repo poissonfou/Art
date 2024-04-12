@@ -216,7 +216,7 @@ exports.addCollection = (req, res, next) => {
 
       for (let i = 0; i < user.collections.length; i++) {
         if (user.collections[i].name == name) {
-          user.collections[i] == collectionUpdate;
+          user.collections[i] = collectionUpdate;
           updated = true;
           break;
         }
@@ -287,6 +287,50 @@ exports.addCollections = (req, res, next) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      next(err);
+    });
+};
+
+exports.deleteCollections = (req, res, next) => {
+  let id = req.userId;
+  let name = req.params.name;
+  let index = null;
+
+  user
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Couln't get user.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      for (let i = 0; i < user.collections.length; i++) {
+        if (user.collections[i].name == name) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index == null) {
+        const error = new Error("Couln't find collection.");
+        error.statusCode = 401;
+        throw error;
+      }
+
+      user.collections.splice(index, 1);
+      return user.save();
+    })
+    .then((user) => {
+      res
+        .json({
+          message: "Successfuly deleted.",
+          collections: user.collections,
+        })
+        .status(200);
+    })
+    .catch((err) => {
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };

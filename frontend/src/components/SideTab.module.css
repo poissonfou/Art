@@ -34,7 +34,10 @@
 }
 
 .static {
-  margin-top: 5em;
+  position: absolute;
+  z-index: 5;
+  top: 5.5em;
+  right: 0em;
 }
 
 .close {

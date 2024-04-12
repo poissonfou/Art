@@ -6,16 +6,26 @@
   display: flex;
   flex-direction: column;
   margin-top: 5em;
-  width: 49%;
+  width: 44em;
 }
 
 .collections {
   display: flex;
-  background-color: rgb(31, 29, 29);
+  flex-direction: column;
+  background-color: rgb(20, 20, 20);
   padding: 1em 0.5em;
-  gap: 0.5em;
   border-radius: 3px;
   margin-bottom: 0.5em;
+}
+
+.collections h2 {
+  margin: 0;
+  color: white;
+}
+
+.collections_icons {
+  display: flex;
+  gap: 0.5em;
 }
 
 .collection_item:hover {
@@ -41,7 +51,7 @@
 }
 
 .add {
-  background-color: rgba(3, 7, 29, 0.5);
+  background-color: rgba(2, 3, 8, 0.5);
   color: white;
   padding: 0.1em;
   height: 4.2rem;
@@ -56,7 +66,7 @@
 .main {
   padding: 1em;
   height: 30em;
-  width: 100%;
+  width: 42em;
   background-color: rgb(15, 13, 13);
   overflow-y: scroll;
 }
@@ -71,7 +81,7 @@
 }
 
 .main::-webkit-scrollbar-thumb {
-  background: #242323;
+  background: rgb(20, 20, 20);
   border-radius: 5px;
 }
 
@@ -110,4 +120,96 @@
   transform: scale(1);
   transition: transform 1s;
   cursor: pointer;
+}
+
+.collection_display {
+  margin-top: 5em;
+  padding: 1em;
+  color: white;
+}
+
+.collection_display h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.collection_display span:hover {
+  cursor: pointer;
+}
+
+.collections_actions {
+  display: flex;
+  width: fit-content;
+  padding: 0.5em;
+  padding-left: 0;
+  border-radius: 3px;
+  gap: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.collections_actions button {
+  border: none;
+  border-radius: 3px;
+  color: white;
+  background-color: rgb(20, 20, 20);
+  padding: 0.5em;
+  font-size: 1.2rem;
+}
+
+.collections_actions button:last-child {
+  background-color: rgb(201, 15, 15);
+}
+
+.collections_actions button:hover {
+  cursor: pointer;
+}
+
+.collection_items_display {
+  padding: 1em;
+  height: 20em;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.collection_items_display::-webkit-scrollbar {
+  width: 10px;
+  display: block;
+}
+
+.collection_items_display::-webkit-scrollbar-track {
+  background-color: rgb(15, 13, 13);
+}
+
+.collection_items_display::-webkit-scrollbar-thumb {
+  background: #242323;
+  border-radius: 5px;
+}
+
+.collection_img {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  height: 5em;
+  width: 4em;
+  object-fit: cover;
+}
+
+.collection_img img {
+  width: inherit;
+  height: inherit;
+  transform: scale(1.2);
+  object-fit: cover;
+  transition: transform 1s;
+  border-radius: 3px;
+}
+
+.collection_img img:hover {
+  transform: scale(1);
+  transition: transform 1s;
+  cursor: pointer;
+}
+
+.collections_actions .highlight_button {
+  border: solid 1px rgb(88, 15, 88);
 }

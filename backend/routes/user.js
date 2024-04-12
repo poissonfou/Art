@@ -38,6 +38,8 @@ router.get("/collections", auth, userControllers.collections);
 
 router.post("/collections", auth, userControllers.addCollections);
 
+router.delete("/collections/:name", auth, userControllers.deleteCollections);
+
 router.get("/:userId", userControllers.getUser);
 
 module.exports = router;

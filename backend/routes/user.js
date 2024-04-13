@@ -3,6 +3,8 @@ const router = require("express").Router();
 const userControllers = require("../controllers/user");
 const auth = require("../middleware/auth");
 
+router.get("/", auth, userControllers.getUser);
+
 router.post(
   "/login",
   [
@@ -28,7 +30,12 @@ router.post(
   userControllers.signup
 );
 
-router.post("/update", auth, userControllers.update);
+router.post(
+  "/update",
+  auth,
+  [body("password").trim().isLength({ min: 5 })],
+  userControllers.update
+);
 
 router.get("/collection", auth, userControllers.collection);
 
@@ -39,7 +46,5 @@ router.get("/collections", auth, userControllers.collections);
 router.post("/collections", auth, userControllers.addCollections);
 
 router.delete("/collections/:name", auth, userControllers.deleteCollections);
-
-router.get("/:userId", userControllers.getUser);
 
 module.exports = router;

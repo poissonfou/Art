@@ -4,7 +4,7 @@ import Form from "../components/Form";
 
 import classes from "./Auth.module.css";
 
-function Login() {
+function Auth() {
   const [searchParams] = useSearchParams();
   let query = searchParams.get("mode");
 
@@ -56,7 +56,7 @@ function Login() {
   );
 }
 
-export default Login;
+export default Auth;
 
 export async function action({ request, params }) {
   const searchParams = new URL(request.url).searchParams;
@@ -82,7 +82,7 @@ export async function action({ request, params }) {
     localStorage.setItem("token", userData.token);
     localStorage.setItem("id", userData.userId);
 
-    return redirect("/board?loggedIn=true");
+    return redirect("/board");
   } else {
     const data = await request.formData();
 

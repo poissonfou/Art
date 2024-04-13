@@ -15,8 +15,11 @@ function SideTab({
   closeTab,
   paintingId,
   updatedBoard,
+  disableBookmark = false,
 }) {
   let route = useLocation();
+
+  let [error, setError] = useState({ isError: false });
 
   let artists = artistsProp;
   let artistsNames = [];
@@ -43,7 +46,15 @@ function SideTab({
       });
 
       if (!data.ok) {
-        console.log(data);
+        data = await data.json();
+
+        setError((prevState) => {
+          let newState = JSON.parse(JSON.stringify(prevState));
+          newState.isError = true;
+          newState.message = "Could not fetch user paintings.";
+          newState.redirect = "reload";
+          return newState;
+        });
         return;
       }
 
@@ -71,6 +82,8 @@ function SideTab({
       navigate("/auth?mode=login");
     }
 
+    if (error.isError) return;
+
     if (savedPaintings[paintingId]) return;
 
     let token = localStorage.getItem("token");
@@ -97,6 +110,8 @@ function SideTab({
   }
 
   async function dropPainting(paintingId) {
+    if (error.isError) return;
+
     let token = localStorage.getItem("token");
 
     let response = await fetch(
@@ -110,7 +125,6 @@ function SideTab({
     );
 
     if (!response.ok) {
-      console.log(response);
       return;
     }
 
@@ -119,8 +133,6 @@ function SideTab({
       delete newState[paintingId];
       return newState;
     });
-
-    console.log(route);
 
     if (route.pathname == "/profile") {
       let paintings = JSON.parse(JSON.stringify(savedPaintings));
@@ -137,8 +149,6 @@ function SideTab({
 
       closeTab();
     }
-
-    console.log(await response.json());
   }
 
   return (
@@ -156,23 +166,42 @@ function SideTab({
       <img src={url} alt={name} />
       <div className={classes.info_actions}>
         <div>
-          <a
-            href={`http://localhost:3000/imgs/download/` + fileName}
-            download={fileName}
-          >
-            <button>
-              <span className="material-symbols-outlined">download</span>
-            </button>
-          </a>
-          {savedPaintings[paintingId] ? (
-            <button onClick={() => dropPainting(paintingId)}>
-              <span className="material-symbols-outlined">bookmark_added</span>
-            </button>
+          {!disableBookmark ? (
+            <>
+              <a
+                href={`http://localhost:3000/imgs/download/` + fileName}
+                download={fileName}
+              >
+                <button>
+                  <span className="material-symbols-outlined">download</span>
+                </button>
+              </a>
+              {savedPaintings[paintingId] ? (
+                <button onClick={() => dropPainting(paintingId)}>
+                  <span className="material-symbols-outlined">
+                    bookmark_added
+                  </span>
+                </button>
+              ) : (
+                <button onClick={() => savePainting(paintingId)}>
+                  <span className="material-symbols-outlined">
+                    bookmark_add
+                  </span>
+                </button>
+              )}
+            </>
           ) : (
-            <button onClick={() => savePainting(paintingId)}>
-              <span className="material-symbols-outlined">bookmark_add</span>
-            </button>
+            <a
+              href={`http://localhost:3000/imgs/download/` + fileName}
+              download={fileName}
+            >
+              <button>
+                <span className="material-symbols-outlined">download</span>
+              </button>
+            </a>
           )}
+
+          {error.isError && <p>Couldn't get user paintings, please reload.</p>}
         </div>
         <div className={classes.info}>
           <p>{`${originalName} | ${year} (${name})`}</p>

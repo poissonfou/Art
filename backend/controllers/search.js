@@ -1,32 +1,29 @@
-const paintings = require("../models/painting");
-const artists = require("../models/artist");
+const Paintings = require("../models/painting");
+const Artists = require("../models/artist");
 
 exports.search = (req, res, next) => {
   let querry = req.query.q;
   let paintingsResult;
 
-  paintings
-    .find({ $text: { $search: querry } })
+  Paintings.find({ $text: { $search: querry } })
     .limit(20)
     .populate("artists")
     .then((paintings) => {
       if (!paintings) {
-        const error = new Error("Could not find post.");
+        const error = new Error("Could not get paintings.");
         error.statusCode = 400;
         throw error;
       }
 
       paintingsResult = paintings;
-      return artists.find({ $text: { $search: querry } }).limit(10);
+      return Artists.find({ $text: { $search: querry } }).limit(10);
     })
     .then((artists) => {
       if (!artists) {
-        const error = new Error("Could not find post.");
+        const error = new Error("Could not get artists.");
         error.statusCode = 400;
         throw error;
       }
-
-      console.log({ artists, paintings: paintingsResult });
 
       res
         .json({

@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
-const user = require("../models/user");
 
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
@@ -20,7 +19,7 @@ exports.login = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        const error = new Error("A user with this email was not found");
+        const error = new Error("A user with this email was not found.");
         error.statusCode = 401;
         throw error;
       }
@@ -45,15 +44,13 @@ exports.login = (req, res, next) => {
       res.json({ token, userId: currentUser._id.toString() });
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
 
 exports.getUser = (req, res, next) => {
-  let id = req.params.userId;
+  let id = req.userId;
 
   User.find({ _id: id })
     .then((user) => {
@@ -66,9 +63,7 @@ exports.getUser = (req, res, next) => {
       res.json({ message: "Success", user }).status(200);
     })
     .catch((err) => {
-      if (err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -76,7 +71,7 @@ exports.getUser = (req, res, next) => {
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Entered data is incorrect");
+    const error = new Error("Entered data is incorrect.");
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -106,17 +101,25 @@ exports.signup = (req, res, next) => {
       return newUser.save();
     })
     .then((result) => {
-      res.json({ message: "User created", userId: result._id }).status(201);
+      res.json({ message: "User created.", userId: result._id }).status(201);
     })
     .catch((err) => {
-      if (err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
 
 exports.update = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error(
+      "Please choose a password with more then 6 digits."
+    );
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   let name = req.body.name;
   let password = req.body.password;
   let id = req.body.id;
@@ -153,12 +156,10 @@ exports.update = (req, res, next) => {
         user.password = currentUser.password;
       }
       user.save();
-      res.json({ message: "Sucessfully updated" }).status(200);
+      res.json({ message: "Success" }).status(200);
     })
     .catch((err) => {
-      if (err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -168,11 +169,10 @@ exports.collection = (req, res, next) => {
   let collectionName = req.body.name;
   let collection;
 
-  user
-    .findById(id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Couln't get user.");
+        const error = new Error("Couldn't get user.");
         error.statusCode = 401;
         throw error;
       }
@@ -184,7 +184,7 @@ exports.collection = (req, res, next) => {
       }
 
       if (!collection) {
-        const error = new Error("Couln't get collection.");
+        const error = new Error("Couldn't get collection.");
         error.statusCode = 401;
         throw error;
       }
@@ -192,9 +192,7 @@ exports.collection = (req, res, next) => {
       res.json({ message: "Success", collection: collection });
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -205,11 +203,10 @@ exports.addCollection = (req, res, next) => {
   let collectionUpdate = req.body.collection;
   let updated = false;
 
-  user
-    .findById(id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Couln't get user.");
+        const error = new Error("Couldn't get user.");
         error.statusCode = 401;
         throw error;
       }
@@ -223,7 +220,7 @@ exports.addCollection = (req, res, next) => {
       }
 
       if (!updated) {
-        const error = new Error("Couldn't find collection");
+        const error = new Error("Couldn't find collection.");
         error.statusCode = 401;
         throw error;
       }
@@ -236,7 +233,7 @@ exports.addCollection = (req, res, next) => {
         .status(200);
     })
     .catch((err) => {
-      if (err.statusCode) err.statusCode = 500;
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -244,11 +241,10 @@ exports.addCollection = (req, res, next) => {
 exports.collections = (req, res, next) => {
   const id = req.userId;
 
-  user
-    .findById(id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Couln't get user.");
+        const error = new Error("Couldn't get user.");
         error.statusCode = 401;
         throw error;
       }
@@ -258,9 +254,7 @@ exports.collections = (req, res, next) => {
         .status(200);
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -269,11 +263,10 @@ exports.addCollections = (req, res, next) => {
   const id = req.userId;
   let collection = req.body.collection;
 
-  user
-    .findById(id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Couln't get user.");
+        const error = new Error("Couldn't get user.");
         error.statusCode = 401;
         throw error;
       }
@@ -284,9 +277,7 @@ exports.addCollections = (req, res, next) => {
       res.json({ message: "Success", collections: user.collections });
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
+      if (!err.statusCode) err.statusCode = 500;
       next(err);
     });
 };
@@ -296,11 +287,10 @@ exports.deleteCollections = (req, res, next) => {
   let name = req.params.name;
   let index = null;
 
-  user
-    .findById(id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Couln't get user.");
+        const error = new Error("Couldn't get user.");
         error.statusCode = 401;
         throw error;
       }
@@ -313,7 +303,7 @@ exports.deleteCollections = (req, res, next) => {
       }
 
       if (index == null) {
-        const error = new Error("Couln't find collection.");
+        const error = new Error("Couldn't find collection.");
         error.statusCode = 401;
         throw error;
       }
@@ -324,10 +314,10 @@ exports.deleteCollections = (req, res, next) => {
     .then((user) => {
       res
         .json({
-          message: "Successfuly deleted.",
+          message: "Success",
           collections: user.collections,
         })
-        .status(200);
+        .status(204);
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;

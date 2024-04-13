@@ -1,11 +1,10 @@
-const artists = require("../models/artist");
+const Artists = require("../models/artist");
 
 exports.getArtists = (req, res, next) => {
-  artists
-    .find()
+  Artists.find()
     .then((artists) => {
       if (!artists) {
-        const error = new Error("Could not find post.");
+        const error = new Error("Could not get artists.");
         error.statusCode = 400;
         throw error;
       }
@@ -19,14 +18,12 @@ exports.getArtists = (req, res, next) => {
 
 exports.getArtist = (req, res, next) => {
   const id = req.params.artistId;
-  if (id == "") return res.json({ message: "Invalid id." }).status(422);
 
-  artists
-    .findById(id)
+  Artists.findById(id)
     .populate("paintings")
     .then((artist) => {
       if (!artist) {
-        const error = new Error("Could not find post.");
+        const error = new Error("Could not find artist.");
         error.statusCode = 400;
         throw error;
       }

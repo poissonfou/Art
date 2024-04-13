@@ -1,0 +1,31 @@
+.not_found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  margin: 0 auto;
+  margin-top: 13em;
+  padding: 2em;
+  border-radius: 5px;
+  background-color: rgb(17, 17, 17);
+  width: fit-content;
+}
+
+.not_found h1 {
+  font-size: 4rem;
+  margin: 0;
+  text-align: center;
+}
+
+.not_found span {
+  font-size: 5rem;
+  margin: 0 auto;
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

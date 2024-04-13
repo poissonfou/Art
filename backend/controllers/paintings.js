@@ -1,9 +1,8 @@
-const paintings = require("../models/painting");
-const user = require("../models/user");
+const Paintings = require("../models/painting");
+const User = require("../models/user");
 
 exports.getPaintings = (req, res, next) => {
-  paintings
-    .find()
+  Paintings.find()
     .populate("artists")
     .then((paintings) => {
       if (!paintings) {
@@ -25,10 +24,8 @@ exports.getPaintings = (req, res, next) => {
 
 exports.getPainting = (req, res, next) => {
   const id = req.params.paintingId;
-  if (id == "") res.json({ message: "invalid id" }).status(422);
 
-  paintings
-    .findById(id)
+  Paintings.findById(id)
     .then((painting) => {
       if (!painting) {
         const error = new Error("Could not find painting.");
@@ -48,24 +45,23 @@ exports.savePaints = (req, res, next) => {
   let paintingId = req.params.paintingId;
   let painting;
 
-  paintings
-    .findById(paintingId, {
-      name: true,
-      originalName: true,
-      url: true,
-      year: true,
-      source: true,
-      artists: true,
-      period: true,
-    })
+  Paintings.findById(paintingId, {
+    name: true,
+    originalName: true,
+    url: true,
+    year: true,
+    source: true,
+    artists: true,
+    period: true,
+  })
     .then((result) => {
       if (!result) {
-        const error = new Error("Could not find .");
+        const error = new Error("Could not find painting.");
         error.statusCode = 400;
         throw error;
       }
       painting = result;
-      return user.findById(userId);
+      return User.findById(userId);
     })
     .then((user) => {
       if (!user) {
@@ -91,8 +87,7 @@ exports.deletePaintings = (req, res) => {
   const paintingId = req.params.paintingId;
   let index;
 
-  user
-    .findById(userId)
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         const error = new Error("Could not find user.");
@@ -122,8 +117,8 @@ exports.deletePaintings = (req, res) => {
 exports.getUserPaintings = (req, res, next) => {
   let userId = req.userId;
 
-  user
-    .findById(userId)
+  User.findById(userId)
+    .populate("paintings")
     .then((user) => {
       if (!user) {
         const error = new Error("Could not find user.");
@@ -131,14 +126,11 @@ exports.getUserPaintings = (req, res, next) => {
         throw error;
       }
 
-      return user.populate("paintings");
-    })
-    .then((user) => {
       return user.populate("paintings.artists");
     })
     .then((user) => {
       res.json({
-        message: "Successfuly retrieved paintings.",
+        message: "Success",
         paintings: user.paintings,
       });
     })

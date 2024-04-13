@@ -213,3 +213,7 @@
 .collections_actions .highlight_button {
   border: solid 1px rgb(88, 15, 88);
 }
+
+.error_message {
+  color: white;
+}

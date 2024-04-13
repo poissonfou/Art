@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
+import Popup from "../components/Popup";
+
 import classes from "./Board.module.css";
 
 let detailsInitial = {
@@ -50,6 +52,10 @@ function Board() {
   function getDetails(info) {
     setDetails((prevDetails) => {
       let newState = JSON.parse(JSON.stringify(prevDetails));
+      if (newState.set && newState.name == info.name) {
+        newState.set = false;
+        return newState;
+      }
       newState.set = true;
       newState.country = info.country;
       newState.year = info.year;
@@ -71,38 +77,43 @@ function Board() {
     });
   }
   return (
-    <main className={classes.main}>
-      {localStorage.getItem("token") !== "null" && <SideTabProfile />}
-      <div
-        className={classes.main_board}
-        onMouseMove={moveDisplay}
-        id="display"
-      >
-        {paintings.map((painting, index) => {
-          return (
-            <div
-              className={classes.img}
-              key={index}
-              onClick={() => getDetails(painting)}
-            >
-              <img src={painting.url} alt="paintings" id={painting._id} />
-            </div>
-          );
-        })}
-      </div>
-      <SideTab
-        show={details.set}
-        url={details.url}
-        name={details.name}
-        originalName={details.originalName}
-        year={details.year}
-        artistsProp={details.artists}
-        country={details.country}
-        source={details.source}
-        paintingId={details.id}
-        closeTab={closeTab}
-      />
-    </main>
+    <>
+      {paintings.isError && (
+        <Popup message={paintings.message} redirect={paintings.redirect} />
+      )}
+      <main className={classes.main}>
+        {localStorage.getItem("token") !== "null" && <SideTabProfile />}
+        <div
+          className={classes.main_board}
+          onMouseMove={moveDisplay}
+          id="display"
+        >
+          {paintings.paintings.map((painting, index) => {
+            return (
+              <div
+                className={classes.img}
+                key={index}
+                onClick={() => getDetails(painting)}
+              >
+                <img src={painting.url} alt="paintings" id={painting._id} />
+              </div>
+            );
+          })}
+        </div>
+        <SideTab
+          show={details.set}
+          url={details.url}
+          name={details.name}
+          originalName={details.originalName}
+          year={details.year}
+          artistsProp={details.artists}
+          country={details.country}
+          source={details.source}
+          paintingId={details.id}
+          closeTab={closeTab}
+        />
+      </main>
+    </>
   );
 }
 
@@ -111,9 +122,18 @@ export default Board;
 export async function loader() {
   const data = await fetch("http://localhost:3000/paintings");
 
-  if (!data.ok) return alert("Error");
+  if (!data.ok) {
+    let response = await data.json();
+
+    return {
+      isError: true,
+      message: response.message,
+      redirect: "reload",
+      paintings: [],
+    };
+  }
 
   let paintings = await data.json();
 
-  return paintings.paintings;
+  return paintings;
 }

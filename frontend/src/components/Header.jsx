@@ -1,9 +1,11 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { searchActions } from "../store";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import classes from "./Header.module.css";
+
+import Popup from "./Popup";
 
 function handleLogout() {
   localStorage.setItem("token", null);
@@ -13,31 +15,34 @@ function handleLogout() {
 function Header() {
   let navigate = useNavigate();
   let dispatch = useDispatch();
-  let router = useLocation();
 
+  let [error, setError] = useState({ isError: false });
   let searchRef = useRef("");
 
   let userId = localStorage.getItem("id");
 
   function redirectBoard() {
-    let token = localStorage.getItem("token");
-    if (token == "null") {
-      navigate("/board?loggedIn=false");
-    } else {
-      navigate("/board?loggedIn=true");
-    }
+    navigate("/board");
   }
 
   async function search(event) {
     event.preventDefault();
-    let querry = searchRef.current.value;
+    let query = searchRef.current.value;
 
-    if (querry == "") return;
+    if (query == "") return;
 
-    let response = await fetch(`http://localhost:3000/search?q=${querry}`);
+    let response = await fetch(`http://localhost:3000/search?q=${query}`);
 
     if (!response.ok) {
-      console.log(response);
+      response = await response.json();
+
+      setError((prevState) => {
+        let newState = JSON.parse(JSON.stringify(prevState));
+        newState.isError = true;
+        newState.message = "Could not send search.";
+        newState.redirect = "reload";
+        return newState;
+      });
       return;
     }
 
@@ -55,38 +60,37 @@ function Header() {
   }
 
   return (
-    <header>
-      <Link
-        to={
-          localStorage.getItem("token") !== "null"
-            ? "/board?loggedIn=true"
-            : "/"
-        }
-      >
-        <h1 className={classes.logo}>ART</h1>
-      </Link>
-      <div>
-        <form action="GET" onSubmit={search}>
-          <label htmlFor="search" style={{ display: "none" }}></label>
-          <input
-            type="text"
-            name="search"
-            ref={searchRef}
-            placeholder="search"
-          />
-        </form>
-        <p onClick={redirectBoard}>Explore</p>
-        {userId == "null" || !userId ? (
-          <Link to="/auth?mode=login">
-            <button>Login</button>
-          </Link>
-        ) : (
-          <Link to="/" onClick={handleLogout}>
-            <button>Logout</button>
-          </Link>
-        )}
-      </div>
-    </header>
+    <>
+      {error.isError && (
+        <Popup message={error.message} redirect={error.redirect} />
+      )}
+      <header>
+        <Link to={localStorage.getItem("token") !== "null" ? "/board" : "/"}>
+          <h1 className={classes.logo}>ART</h1>
+        </Link>
+        <div>
+          <form action="GET" onSubmit={search}>
+            <label htmlFor="search" style={{ display: "none" }}></label>
+            <input
+              type="text"
+              name="search"
+              ref={searchRef}
+              placeholder="search"
+            />
+          </form>
+          <p onClick={redirectBoard}>Explore</p>
+          {userId == "null" || !userId ? (
+            <Link to="/auth?mode=login">
+              <button>Login</button>
+            </Link>
+          ) : (
+            <Link to="/" onClick={handleLogout}>
+              <button>Logout</button>
+            </Link>
+          )}
+        </div>
+      </header>
+    </>
   );
 }
 

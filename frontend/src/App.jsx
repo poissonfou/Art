@@ -15,12 +15,15 @@ import Profile, {
   loader as loaderProfile,
   action as actionProfile,
 } from "./pages/Profile";
-import Search from './pages/Search';
+import Search from "./pages/Search";
+
+import NotFound from "./components/NotFound";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -53,9 +56,9 @@ const router = createBrowserRouter([
         action: actionProfile,
       },
       {
-        path: 'search',
+        path: "search",
         element: <Search />,
-      }
+      },
     ],
   },
 ]);

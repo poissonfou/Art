@@ -39,7 +39,7 @@ app.use("/search", searchRoutes);
 app.use("/user", userRoutes);
 
 app.use((error, req, res, next) => {
-  console.log(error);
+  console.log(error.message);
   const status = error.statusCode;
   const message = error.message;
   const data = error.data;
@@ -51,4 +51,6 @@ mongoose
   .then(() => {
     app.listen(3000, () => console.log("server running"));
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    throw err;
+  });

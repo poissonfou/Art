@@ -426,6 +426,12 @@ export async function action({ request }) {
 
     localStorage.setItem("token", userData.token);
 
+    setTimeout(() => {
+      localStorage.setItem("token", null);
+      window.location.href = "/";
+      alert("Session expired. Please login again.");
+    }, 10800000);
+
     return redirect("/board");
   } else {
     const data = await request.formData();

@@ -15,6 +15,9 @@ import Search from "./pages/Search";
 
 import NotFound from "./components/NotFound";
 
+if (localStorage.getItem("token") !== "null")
+  localStorage.setItem("token", null);
+
 const router = createBrowserRouter([
   {
     path: "/",

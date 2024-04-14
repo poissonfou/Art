@@ -62,7 +62,8 @@ exports.login = (req, res, next) => {
         "secret283917",
         { expiresIn: "3h" }
       );
-      res.json({ token });
+
+      res.json({ token }).status(200);
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;
@@ -163,16 +164,6 @@ exports.signup = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   const error = new Error(
-  //     "Please choose a password with more then 6 digits."
-  //   );
-  //   error.statusCode = 422;
-  //   error.data = errors.array();
-  //   throw error;
-  // }
-
   let name = req.body.name.trim();
   let password = req.body.password.trim();
   let confirm = req.body.confirm.trim();

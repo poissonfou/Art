@@ -239,7 +239,6 @@ function Profile() {
         isError: true,
         message: "Could not save update. Please reload and try again.",
         redirect: "reload",
-        action: "deleteItem",
       });
       return;
     }
@@ -444,7 +443,6 @@ export async function loader() {
     fetch("http://localhost:3000/user/collections", {
       headers: {
         Authorization: `Bearer ${token}`,
-        accept: "application/json",
       },
     }).then((collections) => collections.json()),
   ]);

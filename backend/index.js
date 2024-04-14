@@ -39,7 +39,6 @@ app.use("/search", searchRoutes);
 app.use("/user", userRoutes);
 
 app.use((error, req, res, next) => {
-  console.log(error.message);
   const status = error.statusCode;
   const message = error.message;
   const data = error.data;

@@ -128,7 +128,6 @@ function Search() {
             })}
           {!showArtist &&
             search.paintings.map((painting, index) => {
-              console.log(search.paintings);
               return (
                 <div
                   className={classes.img}

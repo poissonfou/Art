@@ -3,3 +3,13 @@
   justify-content: center;
   margin-top: 6.5em;
 }
+
+.error {
+  box-shadow: 0px 0px 15px red;
+  background-color: rgb(245, 163, 163);
+}
+
+.error_msg {
+  font-size: 0.8rem;
+  margin: 0;
+}

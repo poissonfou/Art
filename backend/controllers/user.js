@@ -6,15 +6,36 @@ const User = require("../models/user");
 
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
-    const error = new Error("Entered data is incorrect");
+    let message = errors.array();
+    const error = new Error(message[0].msg);
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
   }
 
-  let email = req.body.email;
-  let password = req.body.password;
+  let email = req.body.email.trim();
+  let password = req.body.password.trim();
+
+  if (password == "") {
+    const error = new Error("Please enter your password.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (email == "") {
+    const error = new Error("Please enter your email.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (email.indexOf("@") == -1) {
+    const error = new Error("Please entera valid email.");
+    error.statusCode = 422;
+    throw error;
+  }
+
   let currentUser;
   User.findOne({ email: email })
     .then((user) => {
@@ -41,7 +62,7 @@ exports.login = (req, res, next) => {
         "secret283917",
         { expiresIn: "3h" }
       );
-      res.json({ token, userId: currentUser._id.toString() });
+      res.json({ token });
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;
@@ -71,15 +92,47 @@ exports.getUser = (req, res, next) => {
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Entered data is incorrect.");
+    let message = errors.array();
+    const error = new Error(message[0].msg);
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
   }
 
-  let name = req.body.name;
-  let email = req.body.email;
-  let password = req.body.password;
+  let name = req.body.name.trim();
+  let email = req.body.email.trim();
+  let password = req.body.password.trim();
+  let confirm = req.body.confirm.trim();
+
+  if (name == "") {
+    const error = new Error("Please enter your name.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (password !== confirm) {
+    const error = new Error("Password don't match.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (password == "") {
+    const error = new Error("Please enter your password.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (email == "") {
+    const error = new Error("Please enter your email.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  if (email.indexOf("@") == -1) {
+    const error = new Error("Please entera valid email.");
+    error.statusCode = 422;
+    throw error;
+  }
 
   User.findOne({ email: email }).then((user) => {
     if (user) {
@@ -101,7 +154,7 @@ exports.signup = (req, res, next) => {
       return newUser.save();
     })
     .then((result) => {
-      res.json({ message: "User created.", userId: result._id }).status(201);
+      res.json({ message: "User created." }).status(201);
     })
     .catch((err) => {
       if (!err.statusCode) err.statusCode = 500;
@@ -110,20 +163,41 @@ exports.signup = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error(
-      "Please choose a password with more then 6 digits."
-    );
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   const error = new Error(
+  //     "Please choose a password with more then 6 digits."
+  //   );
+  //   error.statusCode = 422;
+  //   error.data = errors.array();
+  //   throw error;
+  // }
+
+  let name = req.body.name.trim();
+  let password = req.body.password.trim();
+  let confirm = req.body.confirm.trim();
+  let id = req.userId;
+  let currentUser;
+
+  if (name == "" && password == "" && confirm == "") {
+    res.json({ message: "No data changed" }).status(200);
   }
 
-  let name = req.body.name;
-  let password = req.body.password;
-  let id = req.body.id;
-  let currentUser;
+  if (password !== "" || confirm !== "") {
+    if (password.length < 6) {
+      const error = new Error(
+        "Please choose a password with more then 6 digits."
+      );
+      error.statusCode = 422;
+      throw error;
+    }
+
+    if (password !== confirm) {
+      const error = new Error("Passwords don't match.");
+      error.statusCode = 422;
+      throw error;
+    }
+  }
 
   User.findById(id)
     .then((user) => {

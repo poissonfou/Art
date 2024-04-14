@@ -19,7 +19,7 @@
   display: inline-block;
   width: 100%;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 10px;
   height: 20em;
   width: 15em;
   object-fit: cover;
@@ -32,7 +32,12 @@
   transform: scale(1.2);
   object-fit: cover;
   transition: transform 1s;
-  border-radius: 3px;
+}
+
+.img:hover {
+  transition: transform 1s;
+  cursor: pointer;
+  border-radius: 0px;
 }
 
 .img img:hover {

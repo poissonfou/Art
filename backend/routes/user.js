@@ -12,7 +12,10 @@ router.post(
       .isEmail()
       .withMessage("Please enter a valid email.")
       .normalizeEmail(),
-    body("password").trim().isLength({ min: 5 }),
+    body("password")
+      .trim()
+      .isLength({ min: 5 })
+      .withMessage("Invalid password."),
   ],
   userControllers.login
 );
@@ -30,12 +33,7 @@ router.post(
   userControllers.signup
 );
 
-router.post(
-  "/update",
-  auth,
-  [body("password").trim().isLength({ min: 5 })],
-  userControllers.update
-);
+router.post("/update", auth, userControllers.update);
 
 router.get("/collection", auth, userControllers.collection);
 

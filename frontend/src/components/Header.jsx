@@ -9,7 +9,6 @@ import Popup from "./Popup";
 
 function handleLogout() {
   localStorage.setItem("token", null);
-  localStorage.setItem("id", null);
 }
 
 function Header() {
@@ -19,7 +18,7 @@ function Header() {
   let [error, setError] = useState({ isError: false });
   let searchRef = useRef("");
 
-  let userId = localStorage.getItem("id");
+  let token = localStorage.getItem("token");
 
   function redirectBoard() {
     navigate("/board");
@@ -65,7 +64,7 @@ function Header() {
         <Popup message={error.message} redirect={error.redirect} />
       )}
       <header>
-        <Link to={localStorage.getItem("token") !== "null" ? "/board" : "/"}>
+        <Link to={token !== "null" ? "/board" : "/"}>
           <h1 className={classes.logo}>ART</h1>
         </Link>
         <div>
@@ -79,7 +78,7 @@ function Header() {
             />
           </form>
           <p onClick={redirectBoard}>Explore</p>
-          {userId == "null" || !userId ? (
+          {token == "null" || !token ? (
             <Link to="/auth?mode=login">
               <button>Login</button>
             </Link>

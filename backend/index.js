@@ -1,6 +1,11 @@
 const express = require("express");
+const fs = require("fs");
 const mongoose = require("mongoose");
 const path = require("path");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+
 const app = express();
 
 const paintingsRoutes = require("./routes/paintings");
@@ -21,16 +26,34 @@ app.use((req, res, next) => {
   next();
 });
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
+app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
+
 app.get("/imgs/:name", (req, res, next) => {
   let name = req.params.name;
-  res.sendFile(path.join(__dirname, "imgs", name));
+  let pathImg = path.join(__dirname, "imgs", name);
+  const file = fs.createReadStream(pathImg);
+  res.setHeader("Content-Type", "image/jpeg");
+  file.pipe(res);
 });
 
 app.get("/imgs/download/:name", (req, res) => {
   let name = req.params.name;
-  let path_ = path.join(__dirname, "imgs", name);
+  let pathImg = path.join(__dirname, "imgs", name);
+  const file = fs.createReadStream(pathImg);
+  res.setHeader("Content-Type", "image/jpeg");
   res.setHeader("Content-Disposition", `attachment; filename=${name}`);
-  res.download(path_, name);
+  file.pipe(res);
 });
 
 app.use("/paintings", paintingsRoutes);
@@ -46,9 +69,11 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb+srv://emerson:lima1234@artproject.duo1qzg.mongodb.net/")
+  .connect(
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@artproject.duo1qzg.mongodb.net/`
+  )
   .then(() => {
-    app.listen(3000, () => console.log("server running"));
+    app.listen(process.env.PORT || 3000, () => console.log("server running"));
   })
   .catch((err) => {
     throw err;

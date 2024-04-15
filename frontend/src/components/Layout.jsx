@@ -29,6 +29,18 @@ function Layout() {
     setProgress(false);
   }, [prevLoc]);
 
+  let route = useLocation();
+
+  if (
+    route.pathname == "/profile" ||
+    route.pathname == "/board" ||
+    route.pathname == "/search"
+  ) {
+    document.getElementsByTagName("body")[0].classList = "no_scroll";
+  } else {
+    document.getElementsByTagName("body")[0].classList = "";
+  }
+
   return (
     <>
       {progress && <TopBarProgress />}

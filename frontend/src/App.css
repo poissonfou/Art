@@ -1,6 +1,13 @@
-#body {
+body {
   background-color: rgb(15, 13, 13);
+}
+
+.y_scroll {
   overflow-x: hidden;
+}
+
+.no_scroll {
+  overflow: hidden;
 }
 
 * {

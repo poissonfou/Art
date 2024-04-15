@@ -75,10 +75,16 @@
   display: flex;
   color: white;
   width: 100%;
-  margin: 3em 6em;
+  margin: 3em 0em;
+  justify-content: space-around;
 }
 
 .collections_info div:first-child {
+  width: 20em;
+}
+
+.collections_info div:last-child,
+.details div {
   width: 60%;
 }
 
@@ -99,15 +105,10 @@
 .collections_info p,
 .details p {
   font-size: 2rem;
-  width: 90%;
 }
 
 .details p {
   width: 100%;
-}
-
-.details div {
-  width: 60%;
 }
 
 footer {

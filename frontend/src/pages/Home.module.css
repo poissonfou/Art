@@ -69,3 +69,85 @@
 .img_four {
   margin-top: 1em;
 }
+
+.collections_info,
+.details {
+  display: flex;
+  color: white;
+  width: 100%;
+  margin: 3em 6em;
+}
+
+.collections_info div:first-child {
+  width: 60%;
+}
+
+.collections_info h1,
+.details h1,
+.details span {
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: start;
+}
+
+.collections_info p,
+.details p {
+  font-size: 2rem;
+  width: 90%;
+}
+
+.details p {
+  width: 100%;
+}
+
+.details div {
+  width: 60%;
+}
+
+footer {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0em 1em;
+  background-color: rgb(17, 15, 15);
+}
+
+footer a:visited {
+  color: white;
+}
+
+footer i {
+  margin-right: 1em;
+  font-size: 1.5rem;
+}
+
+.techs {
+  width: 100%;
+  margin-top: 1em;
+}
+
+.techs p {
+  margin: 0;
+}
+
+.techs div {
+  display: flex;
+}
+
+.techs ul {
+  margin: 0;
+}
+
+.contact {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

@@ -68,7 +68,12 @@ function SideTab({
         });
       }
     }
-    fetchPaintings();
+    if (
+      localStorage.getItem("token") !== "null" &&
+      localStorage.getItem("token")
+    ) {
+      fetchPaintings();
+    }
   }, []);
 
   const [queries] = useSearchParams();

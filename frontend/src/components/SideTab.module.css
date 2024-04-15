@@ -6,7 +6,7 @@
   transform: translateX(32em);
   background-color: rgb(15, 13, 13);
   color: white;
-  padding: 1em 1.2em;
+  padding: 1.2em 1.2em;
   transition: transform 1s;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -29,7 +29,7 @@
 .absolute {
   position: absolute;
   z-index: 5;
-  top: 5.5em;
+  top: 5em;
   right: 0em;
 }
 

@@ -94,8 +94,8 @@
   width: 100%;
   overflow: hidden;
   border-radius: 10px;
-  height: 18em;
-  width: 13em;
+  height: 13em;
+  width: 9.5em;
   object-fit: cover;
 }
 
@@ -194,7 +194,6 @@
   display: inline-block;
   width: 100%;
   overflow: hidden;
-  border-radius: 3px;
   height: 5em;
   width: 4em;
   object-fit: cover;
@@ -203,15 +202,11 @@
 .collection_img img {
   width: inherit;
   height: inherit;
-  transform: scale(1.2);
   object-fit: cover;
   transition: transform 1s;
-  border-radius: 3px;
 }
 
 .collection_img img:hover {
-  transform: scale(1);
-  transition: transform 1s;
   cursor: pointer;
 }
 

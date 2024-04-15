@@ -75,6 +75,10 @@ function Profile() {
   }
 
   function getDetails(info, isCollection) {
+    console.log(
+      collectionDiv.current.offsetWidth,
+      containerMax.current.offsetWidth
+    );
     setDetails((prevDetails) => {
       let newState = JSON.parse(JSON.stringify(prevDetails));
       if (newState.set && newState.name == info.name) {

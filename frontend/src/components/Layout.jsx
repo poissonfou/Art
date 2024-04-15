@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import TopBarProgress from "react-topbar-progress-indicator";
 
@@ -16,6 +16,7 @@ function Layout() {
   const [progress, setProgress] = useState(false);
   const [prevLoc, setPrevLoc] = useState("");
   let location = useLocation();
+  let navigate = useNavigate();
 
   useEffect(() => {
     setPrevLoc(location.pathname);
@@ -39,6 +40,29 @@ function Layout() {
     document.getElementsByTagName("body")[0].classList = "no_scroll";
   } else {
     document.getElementsByTagName("body")[0].classList = "";
+  }
+
+  async function checkToken() {
+    let token = localStorage.getItem("token");
+
+    let response = await fetch("http://localhost:3000/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      localStorage.setItem("token", null);
+      alert("Session expired. Please login again.");
+      return navigate("/");
+    }
+  }
+
+  if (
+    localStorage.getItem("token") &&
+    localStorage.getItem("token") !== "null"
+  ) {
+    checkToken();
   }
 
   return (

@@ -75,10 +75,6 @@ function Profile() {
   }
 
   function getDetails(info, isCollection) {
-    console.log(
-      collectionDiv.current.offsetWidth,
-      containerMax.current.offsetWidth
-    );
     setDetails((prevDetails) => {
       let newState = JSON.parse(JSON.stringify(prevDetails));
       if (newState.set && newState.name == info.name) {
@@ -493,6 +489,14 @@ export async function action({ request }) {
   }
 
   let paintings = Object.values(paintingsCopy);
+
+  if (!Object.values(paintingsCopy).length) {
+    return {
+      isError: true,
+      message: "Please select at least one painting.",
+      payload: false,
+    };
+  }
 
   const formData = {
     collection: {

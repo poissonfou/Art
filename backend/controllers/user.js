@@ -335,6 +335,15 @@ exports.addCollections = (req, res, next) => {
         error.statusCode = 401;
         throw error;
       }
+
+      let titles = user.collections.map(({ name }) => name);
+
+      if (titles.includes(collection.name)) {
+        const error = new Error("Please choose a different title.");
+        error.statusCode = 401;
+        throw error;
+      }
+
       user.collections.push(collection);
       return user.save();
     })

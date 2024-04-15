@@ -41,7 +41,17 @@ function Profile() {
   let actionData = useActionData();
 
   if (!actionData) {
-    actionData = { isError: false };
+    actionData = { isError: false, payload: false };
+  }
+
+  if (actionData.payload) {
+    actionData.payload = false;
+    setCollectionsState((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState = actionData.collections;
+      return newState;
+    });
+    setShowForm(false);
   }
 
   if (!paintings.ok && !error.isError) {
@@ -262,9 +272,6 @@ function Profile() {
 
   return (
     <>
-      {actionData.isError && (
-        <Popup message={actionData.message} redirect={actionData.redirect} />
-      )}
       {error.isError && !paintings.ok && (
         <Popup message={error.message} redirect={error.redirect} />
       )}
@@ -307,13 +314,20 @@ function Profile() {
           </div>
           <div className={classes.main}>
             {showForm && (
-              <Form>
-                <div>
-                  <label htmlFor="name">Name</label>
-                  <input type="text" name="name" />
-                </div>
-                <button>Create</button>
-              </Form>
+              <>
+                <Form>
+                  <div>
+                    <label htmlFor="title">Title</label>
+                    <input type="text" name="title" placeholder="title" />
+                    {actionData.isError && (
+                      <p className={classes.error_message}>
+                        {actionData.message}
+                      </p>
+                    )}
+                  </div>
+                  <button>Create</button>
+                </Form>
+              </>
             )}
             <div className={classes.main_board} id="display">
               {paintings.ok &&
@@ -464,10 +478,14 @@ export async function loader() {
 export async function action({ request }) {
   let token = localStorage.getItem("token");
   let data = await request.formData();
-  let name = data.get("name");
+  let name = data.get("title");
 
   if (name == "") {
-    return;
+    return {
+      isError: true,
+      message: "Please enter a title.",
+      payload: false,
+    };
   }
 
   let paintings = Object.values(paintingsCopy);
@@ -492,11 +510,16 @@ export async function action({ request }) {
     response = await response.json();
     return {
       isError: true,
-      message: "Couldn't save collection.",
-      redirect: "reload",
+      message: response.message,
+      payload: false,
     };
   }
 
   paintingsCopy = {};
-  return window.location.reload();
+  let collections = await response.json();
+  return {
+    isError: false,
+    payload: true,
+    collections: collections.collections,
+  };
 }

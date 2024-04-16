@@ -8,9 +8,9 @@ How to run:
   frontend: npm run dev
   backend: npm run start:dev
 
-Home page
+--HOME PAGE--
   ![image](https://github.com/poissonfou/Art/assets/102704201/600113df-f101-408b-9c32-9c46c02a6ff9)
 
-Board page
+--BOARD PAGE--
   ![image](https://github.com/poissonfou/Art/assets/102704201/ba91ddd0-0deb-4a81-ad77-7bb8d4e25138)
 

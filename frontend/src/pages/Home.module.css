@@ -2,14 +2,11 @@
   margin-top: 10em;
 }
 
-.main_home h1 {
-  color: white;
+.hero_text h1 {
   font-family: "Geologica", sans-serif;
   text-align: center;
   font-size: 4em;
-}
-
-.main_home h1 span {
+  margin: 0;
   background-image: linear-gradient(
     90deg,
     rgba(131, 58, 180, 1) 0%,
@@ -20,18 +17,31 @@
   -webkit-text-fill-color: transparent;
 }
 
+.hero_text span {
+  color: white;
+  font-size: 7rem;
+  font-family: "Bebas Neue", sans-serif;
+}
+
+.hero_text {
+  width: 100%;
+  text-align: center;
+}
+
 .paintings {
   display: flex;
   padding: 2em 0em;
   width: 100%;
+  margin-bottom: 5em;
+  justify-content: center;
 }
 
 .paintings div {
   width: 100%;
   overflow: hidden;
   border-radius: 3px;
-  height: 30em;
-  width: 20em;
+  height: 25em;
+  width: 15em;
   object-fit: cover;
   border: solid rgb(15, 13, 13);
 }
@@ -70,6 +80,29 @@
   margin-top: 1em;
 }
 
+.board_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.board_info h1 {
+  color: white;
+  position: absolute;
+  font-size: 3rem;
+  background-color: rgb(15, 13, 13);
+  width: fit-content;
+  padding: 0.5em;
+  bottom: -0.9em;
+
+  text-align: center;
+}
+
+.collections_info {
+  padding-top: 5em;
+}
+
 .collections_info,
 .details {
   display: flex;
@@ -89,8 +122,21 @@
 }
 
 .collections_info h1,
-.details h1,
-.details span {
+.details h1 {
+  background-image: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(29, 90, 253, 1) 50%,
+    rgba(252, 69, 159, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: start;
+  font-size: 4em;
+}
+
+.details span,
+.board_info span {
   background-image: linear-gradient(
     90deg,
     rgba(131, 58, 180, 1) 0%,

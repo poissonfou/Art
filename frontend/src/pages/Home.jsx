@@ -5,9 +5,10 @@ function Home() {
     <>
       <main className={classes.main_home}>
         <section>
-          <h1>
-            Browse and save <span>art.</span>
-          </h1>
+          <div className={classes.hero_text}>
+            <h1>Browse|Discover|Share</h1>
+            <span>ART</span>
+          </div>
           <div className={classes.paintings}>
             <div className={classes.img_one}>
               <img src="/birthofvenus.jpg" alt="painting image" />
@@ -22,6 +23,14 @@ function Home() {
               <img src="/girlpearlearing.jpg" alt="painting image" />
             </div>
           </div>
+        </section>
+        <section className={classes.board_info}>
+          <img src="/board.jpeg" alt="site image" />
+          <h1>
+            Browse through a vast collection of{" "}
+            <span>high res, free images</span> from different artists{" "}
+            <span>all over the globe.</span>
+          </h1>
         </section>
         <section className={classes.collections_info}>
           <div>

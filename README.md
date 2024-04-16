@@ -16,3 +16,7 @@ How to run:
 --BOARD PAGE--
   ![image](https://github.com/poissonfou/Art/assets/102704201/ba91ddd0-0deb-4a81-ad77-7bb8d4e25138)
 
+  --PROFILE PAGE--
+  ![image](https://github.com/poissonfou/Art/assets/102704201/d45f5873-c563-48c2-a779-12311b0c8770)
+
+

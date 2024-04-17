@@ -64,7 +64,12 @@ function SideTabProfile() {
     <div
       className={`${classes.profile_tab} ${
         route.pathname == "/profile" ? classes.static : classes.absolute
-      } ${showTab ? classes.show : ""}`}
+      } ${showTab ? classes.show : ""} ${
+        route.pathname == "/profile" && window.innerWidth <= 700
+          ? classes.adjust_profile
+          : ""
+      }`}
+      id="profile"
     >
       {error.isError ? (
         <p>Could not fetch</p>
@@ -75,8 +80,11 @@ function SideTabProfile() {
         </>
       )}
 
-      <button onClick={redirectProfile}>Profile</button>
-      <button onClick={redirectUpdate}>Update Info</button>
+      <div className={classes.tab_actions}>
+        <button onClick={redirectProfile}>Profile</button>
+        <button onClick={redirectUpdate}>Update Info</button>
+      </div>
+
       <div
         className={`${classes.mini_profile} ${
           route.pathname == "/profile" ? classes.hidden : ""

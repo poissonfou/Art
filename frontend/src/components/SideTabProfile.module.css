@@ -6,6 +6,19 @@
   padding: 1em;
 }
 
+.tab_actions {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .adjust_profile {
+    width: 10em;
+    height: 31.1em;
+  }
+}
+
 .absolute {
   position: absolute;
   left: 0;
@@ -31,6 +44,13 @@
   -webkit-text-fill-color: transparent;
 }
 
+@media (max-width: 800px) {
+  .profile_tab p:first-child,
+  .profile_tab p:nth-child(2) {
+    font-size: 0.8rem;
+  }
+}
+
 .profile_tab button {
   padding: 0.5em 1em;
   font-size: 1rem;
@@ -40,6 +60,12 @@
   background: rgb(15, 13, 13);
   transition: background-color 1s;
   margin-right: 2em;
+}
+
+@media (max-width: 800px) {
+  .profile_tab button {
+    font-size: 0.8rem;
+  }
 }
 
 .profile_tab button:hover {
@@ -86,7 +112,7 @@
 
 .profile_tab .author_info {
   position: absolute;
-  bottom: 0.5em;
+  bottom: 1.5em;
 }
 
 .profile_tab .author_info i {

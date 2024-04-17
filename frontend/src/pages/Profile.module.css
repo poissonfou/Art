@@ -6,7 +6,25 @@
   display: flex;
   flex-direction: column;
   margin-top: 5em;
-  width: 44em;
+  width: 43em;
+}
+
+@media (max-width: 1100px) {
+  .middle_section {
+    width: 35em;
+  }
+}
+
+@media (max-width: 800px) {
+  .middle_section {
+    width: 25em;
+  }
+}
+
+@media (max-width: 700px) {
+  .middle_section {
+    width: 20em;
+  }
 }
 
 .collections {
@@ -16,11 +34,18 @@
   padding: 0.5em 0.2em;
   border-radius: 3px;
   margin-bottom: 0.5em;
+  width: inherit;
 }
 
 .collections h2 {
   margin: 0;
   color: white;
+}
+
+@media (max-width: 800px) {
+  .collections h2 {
+    font-size: 1.2rem;
+  }
 }
 
 .collections_icons {
@@ -54,6 +79,13 @@
   border-radius: 5px;
 }
 
+@media (max-width: 800px) {
+  .collection_item img {
+    width: 4em;
+    height: 4em;
+  }
+}
+
 .collection_item p {
   font-size: 1rem;
   color: white;
@@ -74,6 +106,13 @@
   border-radius: 5px;
 }
 
+@media (max-width: 800px) {
+  .add {
+    height: 3.5rem;
+    font-size: 3rem;
+  }
+}
+
 .add:hover {
   cursor: pointer;
 }
@@ -81,7 +120,7 @@
 .main {
   padding: 1em;
   height: 20em;
-  width: 42em;
+  width: inherit;
   background-color: rgb(15, 13, 13);
   overflow-y: scroll;
 }
@@ -112,6 +151,19 @@
   height: 13em;
   width: 9.5em;
   object-fit: cover;
+}
+
+@media (max-width: 800px) {
+  .img {
+    height: 10em;
+    width: 7em;
+  }
+}
+@media (max-width: 700px) {
+  .img {
+    height: 7em;
+    width: 5em;
+  }
 }
 
 .border {
@@ -153,6 +205,18 @@
   margin-bottom: 0;
 }
 
+@media (max-width: 1000px) {
+  .collection_display h1 {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 700px) {
+  .img {
+    height: 7em;
+    width: 5em;
+  }
+}
+
 .collection_display span:hover {
   cursor: pointer;
 }
@@ -174,6 +238,12 @@
   background-color: rgb(20, 20, 20);
   padding: 0.5em;
   font-size: 1.2rem;
+}
+
+@media (max-width: 1000px) {
+  .collections_actions button {
+    font-size: 1rem;
+  }
 }
 
 .collections_actions button:last-child {

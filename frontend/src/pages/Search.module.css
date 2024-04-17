@@ -11,6 +11,18 @@
   margin-left: 4em;
 }
 
+@media (max-width: 900px) {
+  .search_display {
+    width: 40em;
+  }
+}
+
+@media (max-width: 700px) {
+  .search_display {
+    width: 25em;
+  }
+}
+
 .search_display::-webkit-scrollbar {
   width: 10px;
   display: block;
@@ -34,6 +46,12 @@
 .artists_display h1 {
   color: white;
   margin: 0;
+}
+
+@media (max-width: 900px) {
+  .artists_display h1 {
+    font-size: 1.5rem;
+  }
 }
 
 .artists_items {
@@ -75,6 +93,20 @@
   width: 13em;
   object-fit: cover;
   border: solid rgb(15, 13, 13);
+}
+
+@media (max-width: 900px) {
+  .img {
+    height: 15em;
+    width: 10em;
+  }
+}
+
+@media (max-width: 700px) {
+  .img {
+    height: 12em;
+    width: 8em;
+  }
 }
 
 .img img {

@@ -91,6 +91,12 @@
   font-size: 1.5rem;
 }
 
+@media (max-width: 800px) {
+  .profile_tab .mini_profile p {
+    font-size: 1.5rem;
+  }
+}
+
 .mini_profile:hover {
   cursor: pointer;
 }

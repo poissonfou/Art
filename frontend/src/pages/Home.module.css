@@ -23,6 +23,23 @@
   font-family: "Bebas Neue", sans-serif;
 }
 
+@media (max-width: 800px) {
+  .hero_text h1 {
+    font-size: 3rem;
+    background-color: bisque;
+  }
+
+  .hero_text span {
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero_text h1 {
+    font-size: 2.5rem;
+  }
+}
+
 .hero_text {
   width: 100%;
   text-align: center;
@@ -44,6 +61,13 @@
   width: 15em;
   object-fit: cover;
   border: solid rgb(15, 13, 13);
+}
+
+@media (max-width: 700px) {
+  .paintings div {
+    height: 20em;
+    width: 15em;
+  }
 }
 
 .paintings div:hover {
@@ -80,6 +104,11 @@
   margin-top: 1em;
 }
 
+.board_info img {
+  width: 100%;
+  object-fit: cover;
+}
+
 .board_info {
   display: flex;
   flex-direction: column;
@@ -95,12 +124,34 @@
   width: fit-content;
   padding: 0.5em;
   bottom: -0.9em;
-
   text-align: center;
 }
 
+@media (max-width: 1000px) {
+  .board_info h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .board_info {
+    height: 15em;
+  }
+
+  .board_info h1 {
+    font-size: 1.5rem;
+    bottom: -2em;
+  }
+}
+
 .collections_info {
-  padding-top: 5em;
+  padding-top: 2em;
+}
+
+@media (max-width: 700px) {
+  .collections_info {
+    padding-top: 3.5em;
+  }
 }
 
 .collections_info,
@@ -110,10 +161,44 @@
   width: 100%;
   margin: 3em 0em;
   justify-content: space-around;
+  align-items: center;
+  font-size: 2rem;
+  gap: 1em;
+}
+
+@media (max-width: 900px) {
+  .collections_info,
+  .details {
+    font-size: 1.5rem;
+  }
+
+  .collections_info h1,
+  .details h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .details {
+    flex-direction: column;
+  }
+
+  .collections_info {
+    flex-direction: column-reverse;
+  }
+
+  .collections_info img {
+    width: 12em;
+  }
+
+  .details img {
+    width: 12em;
+  }
 }
 
 .collections_info div:first-child {
-  width: 20em;
+  display: flex;
+  flex-direction: column;
 }
 
 .collections_info div:last-child,
@@ -132,7 +217,14 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: start;
-  font-size: 4em;
+  font-size: 4rem;
+}
+
+@media (max-width: 900px) {
+  .collections_info h1,
+  .details h1 {
+    font-size: 2.5rem;
+  }
 }
 
 .details span,
@@ -146,15 +238,6 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: start;
-}
-
-.collections_info p,
-.details p {
-  font-size: 2rem;
-}
-
-.details p {
-  width: 100%;
 }
 
 footer {

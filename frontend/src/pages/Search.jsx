@@ -24,7 +24,7 @@ function Search() {
     paintings: [],
     name: "",
   });
-  const [showArtist, setShowArtist] = useState(false);
+  const [showArtist, setShowArtist] = useState({ displayed: false, idx: -1 });
   const [details, setDetails] = useState(detailsInitial);
 
   function getDetails(info) {
@@ -36,7 +36,7 @@ function Search() {
       newState.url = info.url;
       newState.originalName = info.originalName;
       newState.source = info.source;
-      if (showArtist) {
+      if (showArtist.displayed) {
         newState.artists = [{ name: artistsPaintings.name }];
       } else {
         newState.artists = info.artists;
@@ -55,24 +55,20 @@ function Search() {
     });
   }
 
-  async function getArtistsPaintings(id) {
-    let response = await fetch("http://localhost:3000/artists/" + id);
-
-    if (!response.ok) {
-      console.log(response);
-      return;
-    }
-
-    let artist = await response.json();
-
+  async function getArtistsPaintings(index) {
     setArtistsPaintings((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState.paintings = artist.artist.paintings;
-      newState.name = artist.artist.name;
+      newState.paintings = search.artists[index].paintings;
+      newState.name = search.artists[index].name;
       return newState;
     });
 
-    setShowArtist(true);
+    setShowArtist((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState.displayed = true;
+      newState.idx = index;
+      return newState;
+    });
   }
 
   useEffect(() => {
@@ -92,16 +88,25 @@ function Search() {
         {search.artists.length ? (
           <div className={classes.artists_display}>
             <h1>Artists</h1>
-            <div>
+            <div className={classes.artists_items}>
               {search.artists.map((artist, index) => {
                 return (
                   <div
                     onClick={
-                      showArtist
-                        ? () => setShowArtist((prevState) => !prevState)
-                        : () => getArtistsPaintings(artist._id)
+                      showArtist.displayed && showArtist.idx == index
+                        ? () =>
+                            setShowArtist((prevState) => {
+                              let newState = JSON.parse(
+                                JSON.stringify(prevState)
+                              );
+                              newState.displayed = false;
+                              newState.idx = -1;
+                              return newState;
+                            })
+                        : () => getArtistsPaintings(index)
                     }
                     key={index}
+                    className={classes.artists_item}
                   >
                     <p>{artist.name}</p>
                   </div>
@@ -113,7 +118,7 @@ function Search() {
           ""
         )}
         <div className={classes.paintings_display}>
-          {showArtist &&
+          {showArtist.displayed &&
             artistsPaintings.paintings.map((painting, index) => {
               return (
                 <div
@@ -126,7 +131,7 @@ function Search() {
                 </div>
               );
             })}
-          {!showArtist &&
+          {!showArtist.displayed &&
             search.paintings.map((painting, index) => {
               return (
                 <div

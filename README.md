@@ -4,6 +4,10 @@ Saved paintings will appear in your profile, and you can group them into collect
 
 The number of paintings is unfortunatly limited since I'm only one person working on this, but the intended website experience is available.
 
+The frontend uses React, React Router and Redux.
+
+The backend operates with Node + Express and Mongoose.
+
 How to run:
 
   Frontend - npm run dev

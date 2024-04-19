@@ -127,7 +127,7 @@ function SideTab({ updatedBoard }) {
     });
 
     if (ROUTE.pathname == "/profile") {
-      let paintings = JSON.parse(JSON.stringify(savedPaintings));
+      let paintings = JSON.parse(JSON.stringify(userPaintings));
 
       delete paintings[paintingId];
 
@@ -135,7 +135,7 @@ function SideTab({ updatedBoard }) {
 
       updatedBoard((prevState) => {
         let newState = JSON.parse(JSON.stringify(prevState));
-        newState = paintings;
+        newState.paintings = paintings;
         return newState;
       });
 

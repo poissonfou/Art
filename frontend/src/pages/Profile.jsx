@@ -11,24 +11,32 @@ import { paintingDetailsActions } from "../store";
 
 import classes from "./Profile.module.css";
 
-let paintingsCopy = {};
+let selectedPaintingsCopy = {};
 
 function Profile() {
-  const { paintings, collections } = useLoaderData();
-
-  const [paintingsState, setPaintingsState] = useState(paintings.paintings);
-  const [selectedPainting, setSelectedPainting] = useState({});
-  const [showForm, setShowForm] = useState(false);
-  const [deletingItems, setDeletingItems] = useState(false);
-  const [addingItems, setAddingItems] = useState(false);
-  const [collection, setCollection] = useState({ show: false });
-  const [collectionsState, setCollectionsState] = useState(
-    collections.collections
-  );
-  let [error, setError] = useState({ isError: false });
-
+  const { userPaintings, userCollections } = useLoaderData();
   let actionData = useActionData();
   const dispatch = useDispatch();
+  const API_TOKEN = localStorage.getItem("token");
+
+  const [paintingsData, setPaintingsData] = useState({
+    paintings: userPaintings.paintings,
+    selectedPaintings: {},
+  });
+  const [userActions, setUserActions] = useState({
+    create: false,
+    delete: false,
+    update: false,
+  });
+  const [collectionsData, setCollectionsData] = useState({
+    displayingDetails: false,
+    collections: userCollections.collections,
+    selectedCollection: {
+      name: "",
+      paintings: [],
+    },
+  });
+  const [error, setError] = useState({ isError: false });
 
   if (!actionData) {
     actionData = { isError: false, payload: false };
@@ -36,32 +44,30 @@ function Profile() {
 
   if (actionData.payload) {
     actionData.payload = false;
-    setCollectionsState((prevState) => {
+    setCollectionsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState = actionData.collections;
+      newState.collections = actionData.collections;
       return newState;
     });
-    setShowForm(false);
-  }
-
-  if (!paintings.ok && !error.isError) {
-    setError((prevState) => {
+    setUserActions((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState.isError = true;
-      newState.message = "Could not fetch user paintings.";
-      newState.redirect = "reload";
+      newState.create = false;
       return newState;
     });
   }
 
-  if (!collections.ok && !error.isError) {
-    setError((prevState) => {
-      let newState = JSON.parse(JSON.stringify(prevState));
-      newState.isError = true;
-      newState.message = "Could not fetch collections.";
-      newState.redirect = "reload";
-      return newState;
-    });
+  if (!error.isError) {
+    let message;
+    if (!userPaintings.ok) message = "Could not fetch user paintings.";
+    if (!userCollections.ok) message = "Could not fetch collections.";
+    if (message)
+      setError((prevState) => {
+        let newState = JSON.parse(JSON.stringify(prevState));
+        newState.isError = true;
+        newState.message = message;
+        newState.redirect = "reload";
+        return newState;
+      });
   }
 
   function getDetails(info, isCollection) {
@@ -76,7 +82,7 @@ function Profile() {
       artists: info.artists,
     };
 
-    let disableBookmark = collection.show && isCollection;
+    let disableBookmark = collectionsData.displayingDetails && isCollection;
 
     dispatch(
       paintingDetailsActions.setPaintingDetails({
@@ -87,46 +93,51 @@ function Profile() {
   }
 
   function selectPainting(painting) {
-    setSelectedPainting((prevState) => {
+    setPaintingsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      if (newState[painting._id]) {
-        delete newState[painting._id];
+      if (newState.selectedPaintings[painting._id]) {
+        delete newState.selectedPaintings[painting._id];
         return newState;
       }
-      newState[painting._id] = painting;
-      paintingsCopy[painting._id] = painting;
+      newState.selectedPaintings[painting._id] = painting;
+      selectedPaintingsCopy[painting._id] = painting;
       return newState;
     });
   }
 
   function changeShowForm() {
-    setShowForm((prevState) => !prevState);
-    setSelectedPainting((prevState) => {
+    setUserActions((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState = {};
+      newState.create = !newState.create;
+      return newState;
+    });
+
+    setPaintingsData((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState.selectedPaintings = {};
       return newState;
     });
   }
 
   function changeShowCollection(collection) {
-    setCollection((prevState) => {
+    setCollectionsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState.show = !newState.show;
-      newState.paintings = collection.paintings;
-      newState.name = collection.name;
+      newState.displayingDetails = !newState.displayingDetails;
+      newState.selectedCollection = {
+        name: collection.name,
+        paintings: collection.paintings,
+      };
       return newState;
     });
   }
 
   async function deleteCollection(collection) {
-    let token = localStorage.getItem("token");
-
     let response = await fetch(
       "http://localhost:3000/user/collections/" + collection.name,
       {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${API_TOKEN}`,
         },
       }
     );
@@ -140,71 +151,61 @@ function Profile() {
       return;
     }
 
-    setCollectionsState((prevState) => {
+    console.log(collection);
+    setCollectionsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      let index;
-      for (let i = 0; i < newState.length; i++) {
-        if (newState[i].name == collection.name) {
-          index = i;
-          break;
+      let collections = newState.collections;
+      for (let i = 0; i < newState.collections; i++) {
+        if (newState.collections[i].name == collection.name) {
+          collections.split(i, 1);
         }
       }
-
-      newState.splice(index, 1);
-      return newState;
-    });
-
-    setCollection((prevState) => {
-      let newState = JSON.parse(JSON.stringify(prevState));
-      newState = { show: false };
+      newState.displayingDetails = false;
+      newState.collections = collections;
       return newState;
     });
   }
 
   async function updateCollectionItem(collection, deleting) {
-    let selectedItems = Object.keys(selectedPainting);
-    let selectedItemsVals = Object.values(selectedPainting);
-    let token = localStorage.getItem("token");
-    let currentPaintings = [];
+    const SELECTED_PAINTINGS_IDS = Object.keys(paintingsData.selectedPaintings);
+    const SELECTED_PAINTINGS_VALUES = Object.values(
+      paintingsData.selectedPaintings
+    );
+    const CURRENT_PAINTINGS_IDS = collection.paintings.map(
+      (painting) => painting._id
+    );
     let updatedPaintings = [];
 
-    setDeletingItems((prevState) => {
-      if (prevState) {
-        return !prevState;
+    setUserActions((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      if (newState.delete) {
+        newState.delete = !newState.delete;
       }
-      return prevState;
+      if (newState.update) {
+        newState.update = !newState.update;
+      }
+      return newState;
     });
 
-    setAddingItems((prevState) => {
-      if (prevState) {
-        return !prevState;
-      }
-      return prevState;
-    });
-
-    if (!selectedItems.length) return;
+    if (!SELECTED_PAINTINGS_IDS.length) return;
 
     if (deleting) {
       for (let i = 0; i < collection.paintings.length; i++) {
-        if (!selectedItems.includes(collection.paintings[i]._id)) {
+        if (!SELECTED_PAINTINGS_IDS.includes(CURRENT_PAINTINGS_IDS[i])) {
           updatedPaintings.push(collection.paintings[i]);
         }
       }
     } else {
-      for (let i = 0; i < collection.paintings.length; i++) {
-        currentPaintings.push(collection.paintings[i]._id);
-      }
-
-      for (let i = 0; i < selectedItems.length; i++) {
-        if (!currentPaintings.includes(selectedItems[i])) {
-          updatedPaintings.push(selectedItemsVals[i]);
+      for (let i = 0; i < SELECTED_PAINTINGS_IDS.length; i++) {
+        if (!CURRENT_PAINTINGS_IDS.includes(SELECTED_PAINTINGS_IDS[i])) {
+          updatedPaintings.push(SELECTED_PAINTINGS_VALUES[i]);
         }
       }
 
       updatedPaintings = [...collection.paintings, ...updatedPaintings];
     }
 
-    let updatedCollection = {
+    const updatedCollection = {
       name: collection.name,
       paintings: updatedPaintings,
     };
@@ -217,7 +218,7 @@ function Profile() {
     let response = await fetch("http://localhost:3000/user/collection", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${API_TOKEN}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
@@ -232,41 +233,43 @@ function Profile() {
       return;
     }
 
-    setCollection((prevState) => {
+    setCollectionsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState.show = true;
-      newState.paintings = updatedPaintings;
-      newState.name = collection.name;
+      newState.displayingDetails = true;
+      newState.selectedCollection = {
+        name: collection.name,
+        paintings: updatedPaintings,
+      };
       return newState;
     });
 
-    setSelectedPainting((prevState) => {
+    setPaintingsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState = {};
+      newState.selectedPaintings = {};
       return newState;
     });
 
-    paintingsCopy = {};
+    selectedPaintingsCopy = {};
   }
 
   return (
     <>
-      {error.isError && !paintings.ok && (
+      {error.isError && !userPaintings.ok && (
         <Popup message={error.message} redirect={error.redirect} />
       )}
       <main className={classes.container}>
-        <SideTabProfile className={classes.profile_tab} />
+        <SideTabProfile />
         <div className={classes.middle_section}>
           <div className={classes.collections}>
             <h2>Collections</h2>
             <div className={classes.collections_icons}>
-              {error.isError && !collections.ok && (
+              {error.isError && !userCollections.ok && (
                 <p className={classes.error_message}>
                   {error.message + " Please reload"}
                 </p>
               )}
-              {collections.ok &&
-                collectionsState.map((collection, index) => {
+              {userCollections.ok &&
+                collectionsData.collections.map((collection, index) => {
                   return (
                     <div
                       className={classes.collection_item}
@@ -281,7 +284,7 @@ function Profile() {
                     </div>
                   );
                 })}
-              {collections.ok && (
+              {userCollections.ok && (
                 <span
                   className={`${"material-symbols-outlined"} ${classes.add}`}
                   onClick={changeShowForm}
@@ -292,7 +295,7 @@ function Profile() {
             </div>
           </div>
           <div className={classes.main}>
-            {showForm && (
+            {userActions.create && (
               <>
                 <Form>
                   <div>
@@ -309,19 +312,19 @@ function Profile() {
               </>
             )}
             <div className={classes.main_board} id="display">
-              {paintings.ok &&
-                paintingsState.map((painting, index) => {
+              {userPaintings.ok &&
+                paintingsData.paintings.map((painting, index) => {
                   return (
                     <div
                       className={`${classes.img} ${
-                        (showForm || addingItems) &&
-                        selectedPainting[painting._id]
+                        (userActions.create || userActions.update) &&
+                        paintingsData.selectedPaintings[painting._id]
                           ? classes.selected
                           : classes.border
                       }`}
                       key={index}
                       onClick={
-                        !showForm && !addingItems
+                        !userActions.create && !userActions.update
                           ? () => getDetails(painting)
                           : () => selectPainting(painting)
                       }
@@ -338,72 +341,101 @@ function Profile() {
             </div>
           </div>
         </div>
-        {collection.show && (
+        {collectionsData.displayingDetails && (
           <div className={classes.collection_display}>
             <span
               className="material-symbols-outlined"
               onClick={() =>
-                setCollection((prevState) => {
+                setCollectionsData((prevState) => {
                   let newState = JSON.parse(JSON.stringify(prevState));
-                  newState = { show: false };
+                  newState.displayingDetails = false;
                   return newState;
                 })
               }
             >
               close
             </span>
-            <h1>{collection.name}</h1>
+            <h1>{collectionsData.selectedCollection.name}</h1>
             <div className={classes.collections_actions}>
               <button
                 onClick={
-                  !addingItems
-                    ? () => setAddingItems((prevState) => !prevState)
-                    : () => updateCollectionItem(collection, false)
+                  !userActions.update
+                    ? () =>
+                        setUserActions((prevState) => {
+                          let newState = JSON.parse(JSON.stringify(prevState));
+                          newState.update = !newState.update;
+                          return newState;
+                        })
+                    : () =>
+                        updateCollectionItem(
+                          collectionsData.selectedCollection,
+                          false
+                        )
                 }
-                className={addingItems ? classes.highlight_button : ""}
+                className={userActions.update ? classes.highlight_button : ""}
               >
                 Add
               </button>
               <button
                 onClick={
-                  !deletingItems
-                    ? () => setDeletingItems((prevState) => !prevState)
-                    : () => updateCollectionItem(collection, true)
+                  !userActions.delete
+                    ? () =>
+                        setUserActions((prevState) => {
+                          let newState = JSON.parse(JSON.stringify(prevState));
+                          newState.delete = !newState.delete;
+                          return newState;
+                        })
+                    : () =>
+                        updateCollectionItem(
+                          collectionsData.selectedCollection,
+                          true
+                        )
                 }
-                className={deletingItems ? classes.highlight_button : ""}
+                className={userActions.delete ? classes.highlight_button : ""}
               >
                 Remove
               </button>
-              <button onClick={() => deleteCollection(collection)}>
+              <button
+                onClick={() =>
+                  deleteCollection(collectionsData.selectedCollection)
+                }
+              >
                 Delete
               </button>
             </div>
             {error.isError && <p>{error.message}</p>}
             <div className={classes.collection_items_display}>
-              {collection.paintings.map((painting, index) => {
-                return (
-                  <div
-                    className={`${classes.collection_img} ${
-                      deletingItems && selectedPainting[painting._id]
-                        ? classes.selected
-                        : classes.border
-                    }`}
-                    key={index}
-                    title={painting.name}
-                    onClick={
-                      !deletingItems
-                        ? () => getDetails(painting, true)
-                        : () => selectPainting(painting)
-                    }
-                  >
-                    <img src={painting.url} alt="paintings" id={painting._id} />
-                  </div>
-                );
-              })}
+              {collectionsData.selectedCollection.paintings.map(
+                (painting, index) => {
+                  return (
+                    <div
+                      className={`${classes.collection_img} ${
+                        userActions.delete &&
+                        paintingsData.selectedPaintings[painting._id]
+                          ? classes.selected
+                          : classes.border
+                      }`}
+                      key={index}
+                      title={painting.name}
+                      onClick={
+                        !userActions.delete
+                          ? () => getDetails(painting, true)
+                          : () => selectPainting(painting)
+                      }
+                    >
+                      <img
+                        src={painting.url}
+                        alt="paintings"
+                        id={painting._id}
+                      />
+                    </div>
+                  );
+                }
+              )}
             </div>
           </div>
         )}
-        <SideTab updatedBoard={setPaintingsState} />
+        <SideTab updatedBoard={setPaintingsData} />
       </main>
     </>
   );
@@ -412,39 +444,39 @@ function Profile() {
 export default Profile;
 
 export async function loader() {
-  let token = localStorage.getItem("token");
+  const API_TOKEN = localStorage.getItem("token");
 
-  let [painting, collections] = await Promise.all([
+  const [userPaintings, userCollections] = await Promise.all([
     fetch("http://localhost:3000/paintings/user", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${API_TOKEN}`,
       },
     }).then((paintings) => paintings.json()),
     fetch("http://localhost:3000/user/collections", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${API_TOKEN}`,
       },
     }).then((collections) => collections.json()),
   ]);
 
-  if (painting.message == "Success") {
-    painting.ok = true;
+  if (userPaintings.message == "Success") {
+    userPaintings.ok = true;
   }
 
-  if (collections.message == "Success") {
-    collections.ok = true;
+  if (userCollections.message == "Success") {
+    userCollections.ok = true;
   }
 
   return {
-    paintings: painting,
-    collections: collections,
+    userCollections,
+    userPaintings,
   };
 }
 
 export async function action({ request }) {
-  let token = localStorage.getItem("token");
-  let data = await request.formData();
-  let name = data.get("title");
+  const API_TOKEN = localStorage.getItem("token");
+  const INPUT_DATA = await request.formData();
+  const name = INPUT_DATA.get("title");
 
   if (name == "") {
     return {
@@ -454,9 +486,9 @@ export async function action({ request }) {
     };
   }
 
-  let paintings = Object.values(paintingsCopy);
+  const selectedPaintings = Object.values(selectedPaintingsCopy);
 
-  if (!Object.values(paintingsCopy).length) {
+  if (!selectedPaintings.length) {
     return {
       isError: true,
       message: "Please select at least one painting.",
@@ -467,14 +499,14 @@ export async function action({ request }) {
   const formData = {
     collection: {
       name,
-      paintings,
+      paintings: selectedPaintings,
     },
   };
 
   let response = await fetch("http://localhost:3000/user/collections", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${API_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
@@ -489,8 +521,8 @@ export async function action({ request }) {
     };
   }
 
-  paintingsCopy = {};
-  let collections = await response.json();
+  selectedPaintingsCopy = {};
+  const collections = await response.json();
   return {
     isError: false,
     payload: true,

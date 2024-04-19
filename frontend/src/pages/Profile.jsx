@@ -151,7 +151,6 @@ function Profile() {
       return;
     }
 
-    console.log(collection);
     setCollectionsData((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
       let collections = newState.collections;

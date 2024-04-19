@@ -1,47 +1,37 @@
-import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import classes from "./SideTab.module.css";
 
-function SideTab({
-  url,
-  name,
-  originalName,
-  year,
-  artistsProp,
-  country,
-  source,
-  show,
-  closeTab,
-  paintingId,
-  updatedBoard,
-  disableBookmark = false,
-}) {
-  let route = useLocation();
+import { paintingDetailsActions } from "../store";
 
-  let [error, setError] = useState({ isError: false });
-
-  let artists = artistsProp;
-  let artistsNames = [];
-
-  for (let i = 0; i < artists.length; i++) {
-    artistsNames.push(artists[i].name);
-  }
-
-  artistsNames = artistsNames.toString();
-  artistsNames = artistsNames.replaceAll(",", ", ");
-
+function SideTab({ updatedBoard }) {
+  const ROUTE = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const PAINTING_DETAILS = useSelector(
+    (state) => state.paintingDetails.details
+  );
+  const SHOW_BOOKMARK = useSelector(
+    (state) => state.paintingDetails.disableBookmark
+  );
 
-  const [savedPaintings, setSavedPaintings] = useState({});
+  const API_TOKEN = localStorage.getItem("token");
+
+  const [error, setError] = useState({ isError: false });
+  const [userPaintings, setUserPaintings] = useState({});
+
+  const ARTISTS = PAINTING_DETAILS.artists
+    .map((artist) => artist.name)
+    .toString()
+    .replaceAll(",", ", ");
 
   useEffect(() => {
     async function fetchPaintings() {
-      let token = localStorage.getItem("token");
-
       let data = await fetch("http://localhost:3000/paintings/user", {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${API_TOKEN}`,
         },
       });
 
@@ -58,38 +48,35 @@ function SideTab({
         return;
       }
 
-      const paintings = await data.json();
+      const SAVED_PAINTINGS = await data.json();
 
-      for (let i = 0; i < paintings.paintings.length; i++) {
-        setSavedPaintings((prevState) => {
+      for (let i = 0; i < SAVED_PAINTINGS.paintings.length; i++) {
+        setUserPaintings((prevState) => {
           let newPaintings = JSON.parse(JSON.stringify(prevState));
-          newPaintings[paintings.paintings[i]._id] = paintings.paintings[i];
+          newPaintings[SAVED_PAINTINGS.paintings[i]._id] =
+            SAVED_PAINTINGS.paintings[i];
           return newPaintings;
         });
       }
     }
-    if (
-      localStorage.getItem("token") !== "null" &&
-      localStorage.getItem("token")
-    ) {
+    if (API_TOKEN !== "null" && API_TOKEN) {
       fetchPaintings();
     }
   }, []);
 
-  const [queries] = useSearchParams();
-  let loggedIn = queries.get("loggedIn");
+  const URL = PAINTING_DETAILS.url.split("/");
+  const FILE_NAME = URL[URL.length - 1];
 
-  let fileChunks = url.split("/");
-  let fileName = fileChunks[fileChunks.length - 1];
+  function closeTab() {
+    dispatch(paintingDetailsActions.closeTab(false));
+  }
 
   async function savePainting(paintingId) {
-    if (loggedIn == "false") {
+    if (API_TOKEN == "null" && !API_TOKEN) {
       navigate("/auth?mode=login");
     }
 
     if (error.isError) return;
-
-    if (savedPaintings[paintingId]) return;
 
     let token = localStorage.getItem("token");
 
@@ -107,10 +94,10 @@ function SideTab({
       return;
     }
 
-    setSavedPaintings((prevState) => {
-      let newObject = JSON.parse(JSON.stringify(prevState));
-      newObject[paintingId] = paintingId;
-      return newObject;
+    setUserPaintings((prevState) => {
+      let newState = JSON.parse(JSON.stringify(prevState));
+      newState[paintingId] = paintingId;
+      return newState;
     });
   }
 
@@ -133,13 +120,13 @@ function SideTab({
       return;
     }
 
-    setSavedPaintings((prevState) => {
+    setUserPaintings((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
       delete newState[paintingId];
       return newState;
     });
 
-    if (route.pathname == "/profile") {
+    if (ROUTE.pathname == "/profile") {
       let paintings = JSON.parse(JSON.stringify(savedPaintings));
 
       delete paintings[paintingId];
@@ -159,8 +146,8 @@ function SideTab({
   return (
     <div
       className={`${classes.tab_container} ${
-        route.pathname == "/profile" ? classes.static : classes.absolute
-      } ${show ? classes.show : ""}`}
+        ROUTE.pathname == "/profile" ? classes.static : classes.absolute
+      } ${PAINTING_DETAILS.showTab ? classes.show : ""}`}
     >
       <span
         className={`${"material-symbols-outlined"} ${classes.close}`}
@@ -168,27 +155,27 @@ function SideTab({
       >
         navigate_next
       </span>
-      <img src={url} alt={name} />
+      <img src={PAINTING_DETAILS.url} alt={PAINTING_DETAILS.name} />
       <div className={classes.info_actions}>
         <div>
-          {!disableBookmark ? (
+          {!SHOW_BOOKMARK ? (
             <>
               <a
-                href={`http://localhost:3000/imgs/download/` + fileName}
-                download={fileName}
+                href={`http://localhost:3000/imgs/download/` + FILE_NAME}
+                download={FILE_NAME}
               >
                 <button>
                   <span className="material-symbols-outlined">download</span>
                 </button>
               </a>
-              {savedPaintings[paintingId] ? (
-                <button onClick={() => dropPainting(paintingId)}>
+              {userPaintings[PAINTING_DETAILS.id] ? (
+                <button onClick={() => dropPainting(PAINTING_DETAILS.id)}>
                   <span className="material-symbols-outlined">
                     bookmark_added
                   </span>
                 </button>
               ) : (
-                <button onClick={() => savePainting(paintingId)}>
+                <button onClick={() => savePainting(PAINTING_DETAILS.id)}>
                   <span className="material-symbols-outlined">
                     bookmark_add
                   </span>
@@ -197,21 +184,20 @@ function SideTab({
             </>
           ) : (
             <a
-              href={`http://localhost:3000/imgs/download/` + fileName}
-              download={fileName}
+              href={`http://localhost:3000/imgs/download/` + FILE_NAME}
+              download={FILE_NAME}
             >
               <button>
                 <span className="material-symbols-outlined">download</span>
               </button>
             </a>
           )}
-
           {error.isError && <p>Couldn't get user paintings, please reload.</p>}
         </div>
         <div className={classes.info}>
-          <p>{`${originalName} | ${year} (${name})`}</p>
-          <p>{`${artistsNames} | ${country}`}</p>
-          <a href={source}>Learn more.</a>
+          <p>{`${PAINTING_DETAILS.originalName} | ${PAINTING_DETAILS.year} (${PAINTING_DETAILS.name})`}</p>
+          <p>{`${ARTISTS} | ${PAINTING_DETAILS.country}`}</p>
+          <a href={PAINTING_DETAILS.source}>Learn more.</a>
         </div>
       </div>
     </div>

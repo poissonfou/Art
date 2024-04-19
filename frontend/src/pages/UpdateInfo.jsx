@@ -7,19 +7,21 @@ import classes from "./UpdateInfo.module.css";
 
 let hasError = false;
 
+const INITIAL_AUTH = {
+  errors: {
+    password: false,
+    isEqual: false,
+    confirm: false,
+  },
+  msg: {
+    password: "",
+    isEqual: "",
+    confirm: "",
+  },
+};
+
 function UpdateInfo() {
-  let [error, setError] = useState({
-    errors: {
-      password: false,
-      isEqual: false,
-      confirm: false,
-    },
-    msg: {
-      password: "",
-      isEqual: "",
-      confirm: "",
-    },
-  });
+  const [auth, setAuth] = useState(INITIAL_AUTH);
 
   let password = useRef("");
   let confirm = useRef("");
@@ -32,11 +34,11 @@ function UpdateInfo() {
 
   function inputAuth(field) {
     if (field == "password") {
-      let passwordInput = password.current.value.trim();
+      const PASSWORD_INPUT = password.current.value.trim();
 
-      if (passwordInput.length < 6 && passwordInput !== "") {
+      if (PASSWORD_INPUT.length < 6 && PASSWORD_INPUT !== "") {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.password = true;
           newState.msg.password = "Password must be longer then six digits.";
@@ -49,9 +51,9 @@ function UpdateInfo() {
         return;
       }
 
-      if (passwordInput !== confirm.current.value.trim()) {
+      if (PASSWORD_INPUT !== confirm.current.value.trim()) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.isEqual = true;
           newState.msg.isEqual = "Passwords don't match";
@@ -66,11 +68,11 @@ function UpdateInfo() {
     }
 
     if (field == "confirm") {
-      let confirmInput = confirm.current.value.trim();
+      const CONFIRM_INPUT = confirm.current.value.trim();
 
-      if (confirmInput !== password.current.value.trim()) {
+      if (CONFIRM_INPUT !== password.current.value.trim()) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.isEqual = true;
           newState.msg.isEqual = "Passwords don't match";
@@ -83,9 +85,9 @@ function UpdateInfo() {
         return;
       }
 
-      if (confirmInput.length < 6 && confirmInput !== "") {
+      if (CONFIRM_INPUT.length < 6 && CONFIRM_INPUT !== "") {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.confirm = true;
           newState.msg.confirm = "Password must be longer then six digits.";
@@ -100,28 +102,9 @@ function UpdateInfo() {
     }
 
     if (hasError) {
-      setError((prevState) => {
+      setAuth((prevState) => {
         let newState = JSON.parse(JSON.stringify(prevState));
-        newState = {
-          errors: {
-            name: false,
-            password: false,
-            isEqual: false,
-            email: false,
-            confirm: false,
-            emailLogin: false,
-            passwordLogin: false,
-          },
-          msg: {
-            name: "",
-            password: "",
-            isEqual: "",
-            email: "",
-            confirm: "",
-            emailLogin: false,
-            passwordLogin: false,
-          },
-        };
+        newState = INITIAL_AUTH;
         return newState;
       });
     }
@@ -145,15 +128,15 @@ function UpdateInfo() {
             name="password"
             ref={password}
             onBlur={() => inputAuth("password")}
-            className={`${error.errors.password ? classes.error : ""} ${
-              error.errors.isEqual ? classes.error : ""
+            className={`${auth.errors.password ? classes.error : ""} ${
+              auth.errors.isEqual ? classes.error : ""
             }`}
           />
-          {error.errors.password && (
-            <p className={classes.error_msg}>{error.msg.password}</p>
+          {auth.errors.password && (
+            <p className={classes.error_msg}>{auth.msg.password}</p>
           )}
-          {error.errors.isEqual && (
-            <p className={classes.error_msg}>{error.msg.isEqual}</p>
+          {auth.errors.isEqual && (
+            <p className={classes.error_msg}>{auth.msg.isEqual}</p>
           )}
         </div>
         <div>
@@ -163,15 +146,15 @@ function UpdateInfo() {
             name="confirm"
             ref={confirm}
             onBlur={() => inputAuth("confirm")}
-            className={`${error.errors.confirm ? classes.error : ""} ${
-              error.errors.isEqual ? classes.error : ""
+            className={`${auth.errors.confirm ? classes.error : ""} ${
+              auth.errors.isEqual ? classes.error : ""
             }`}
           />
-          {error.errors.confirm && (
-            <p className={classes.error_msg}>{error.msg.confirm}</p>
+          {auth.errors.confirm && (
+            <p className={classes.error_msg}>{auth.msg.confirm}</p>
           )}
-          {error.errors.isEqual && (
-            <p className={classes.error_msg}>{error.msg.isEqual}</p>
+          {auth.errors.isEqual && (
+            <p className={classes.error_msg}>{auth.msg.isEqual}</p>
           )}
         </div>
         <p>Enter only the info you wish to change.</p>
@@ -185,18 +168,18 @@ export default UpdateInfo;
 
 export async function action({ request }) {
   if (hasError) return;
-  const data = await request.formData();
+  const INPUT_DATA = await request.formData();
 
-  let name = data.get("name").trim();
-  let password = data.get("password").trim();
-  let confirm = data.get("confirm").trim();
-  let token = localStorage.getItem("token");
+  const name = INPUT_DATA.get("name").trim();
+  const password = INPUT_DATA.get("password").trim();
+  const confirm = INPUT_DATA.get("confirm").trim();
+  const API_TOKEN = localStorage.getItem("token");
 
   if (password == "" && name == "" && confirm == "") {
     return redirect("/board");
   }
 
-  let formData = {
+  const formData = {
     name,
     password,
     confirm,
@@ -205,7 +188,7 @@ export async function action({ request }) {
   const response = await fetch("http://localhost:3000/user/update", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${API_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),

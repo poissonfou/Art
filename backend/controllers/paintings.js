@@ -40,7 +40,7 @@ exports.getPainting = (req, res, next) => {
     });
 };
 
-exports.savePaints = (req, res, next) => {
+exports.savePaintings = (req, res, next) => {
   let userId = req.userId;
   let paintingId = req.params.paintingId;
   let painting;

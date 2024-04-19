@@ -26,11 +26,11 @@ function Header() {
 
   async function search(event) {
     event.preventDefault();
-    let query = searchRef.current.value;
+    const QUERY = searchRef.current.value;
 
-    if (query == "") return;
+    if (QUERY == "") return;
 
-    let response = await fetch(`http://localhost:3000/search?q=${query}`);
+    let response = await fetch(`http://localhost:3000/search?q=${QUERY}`);
 
     if (!response.ok) {
       response = await response.json();
@@ -47,12 +47,12 @@ function Header() {
 
     let results = await response.json();
 
-    let update = {
+    let search = {
       artists: results.results.artists,
       paintings: results.results.paintings,
     };
 
-    dispatch(searchActions.sendSearch(update));
+    dispatch(searchActions.sendSearch(search));
     searchRef.current.value = "";
 
     navigate("/search");

@@ -85,7 +85,7 @@ function Home() {
           <p>Emerson Lima | 2024</p>
           <div>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=emersonlimago123@gmail.com">
-              <i class="bi bi-envelope"></i>
+              <i className="bi bi-envelope"></i>
             </a>
             <a href="https://www.linkedin.com/in/emerson-lima-%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88-000986237/">
               <i className="bi bi-linkedin"></i>

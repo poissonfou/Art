@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
@@ -7,21 +7,11 @@ import Popup from "../components/Popup";
 
 import classes from "./Board.module.css";
 
-let detailsInitial = {
-  set: false,
-  country: "",
-  year: "",
-  url: "",
-  originalName: "",
-  source: "",
-  artists: "",
-  name: "",
-  id: "",
-};
+import { paintingDetailsActions } from "../store";
 
 function Board() {
-  const [details, setDetails] = useState(detailsInitial);
   const paintings = useLoaderData();
+  const dispatch = useDispatch();
 
   function moveDisplay(event) {
     let display = document.getElementById("display");
@@ -50,32 +40,22 @@ function Board() {
   }
 
   function getDetails(info) {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      if (newState.set && newState.name == info.name) {
-        newState.set = false;
-        return newState;
-      }
-      newState.set = true;
-      newState.country = info.country;
-      newState.year = info.year;
-      newState.url = info.url;
-      newState.originalName = info.originalName;
-      newState.source = info.source;
-      newState.artists = info.artists;
-      newState.name = info.name;
-      newState.id = info._id;
-      return newState;
-    });
+    let newPainting = {
+      country: info.country,
+      year: info.year,
+      url: info.url,
+      originalName: info.originalName,
+      source: info.source,
+      artists: info.artists,
+      name: info.name,
+      id: info._id,
+    };
+
+    dispatch(
+      paintingDetailsActions.setPaintingDetails({ details: newPainting })
+    );
   }
 
-  function closeTab() {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      newState.set = false;
-      return newState;
-    });
-  }
   return (
     <>
       {paintings.isError && (
@@ -100,18 +80,7 @@ function Board() {
             );
           })}
         </div>
-        <SideTab
-          show={details.set}
-          url={details.url}
-          name={details.name}
-          originalName={details.originalName}
-          year={details.year}
-          artistsProp={details.artists}
-          country={details.country}
-          source={details.source}
-          paintingId={details.id}
-          closeTab={closeTab}
-        />
+        <SideTab />
       </main>
     </>
   );

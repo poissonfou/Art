@@ -1,32 +1,21 @@
 import { useLoaderData, useActionData } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
 import Form from "../components/Form";
 import Popup from "../components/Popup";
 
-import classes from "./Profile.module.css";
+import { paintingDetailsActions } from "../store";
 
-let detailsInitial = {
-  set: false,
-  country: "",
-  year: "",
-  url: "",
-  originalName: "",
-  source: "",
-  artists: "",
-  name: "",
-  id: "",
-  disableBookmark: false,
-};
+import classes from "./Profile.module.css";
 
 let paintingsCopy = {};
 
 function Profile() {
   const { paintings, collections } = useLoaderData();
 
-  const [details, setDetails] = useState(detailsInitial);
   const [paintingsState, setPaintingsState] = useState(paintings.paintings);
   const [selectedPainting, setSelectedPainting] = useState({});
   const [showForm, setShowForm] = useState(false);
@@ -39,6 +28,7 @@ function Profile() {
   let [error, setError] = useState({ isError: false });
 
   let actionData = useActionData();
+  const dispatch = useDispatch();
 
   if (!actionData) {
     actionData = { isError: false, payload: false };
@@ -75,36 +65,25 @@ function Profile() {
   }
 
   function getDetails(info, isCollection) {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      if (newState.set && newState.name == info.name) {
-        newState.set = false;
-        return newState;
-      }
-      newState.set = true;
-      newState.country = info.country;
-      newState.year = info.year;
-      newState.url = info.url;
-      newState.originalName = info.originalName;
-      newState.source = info.source;
-      newState.artists = info.artists;
-      newState.name = info.name;
-      newState.id = info._id;
-      if (collection.show && isCollection) {
-        newState.disableBookmark = true;
-        return newState;
-      }
-      newState.disableBookmark = false;
-      return newState;
-    });
-  }
+    let newPainting = {
+      country: info.country,
+      year: info.year,
+      url: info.url,
+      originalName: info.originalName,
+      source: info.source,
+      name: info.name,
+      id: info._id,
+      artists: info.artists,
+    };
 
-  function closeTab() {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      newState.set = false;
-      return newState;
-    });
+    let disableBookmark = collection.show && isCollection;
+
+    dispatch(
+      paintingDetailsActions.setPaintingDetails({
+        details: newPainting,
+        disableBookmark,
+      })
+    );
   }
 
   function selectPainting(painting) {
@@ -424,20 +403,7 @@ function Profile() {
             </div>
           </div>
         )}
-        <SideTab
-          show={details.set}
-          url={details.url}
-          name={details.name}
-          originalName={details.originalName}
-          year={details.year}
-          artistsProp={details.artists}
-          country={details.country}
-          source={details.source}
-          paintingId={details.id}
-          disableBookmark={details.disableBookmark}
-          closeTab={closeTab}
-          updatedBoard={setPaintingsState}
-        />
+        <SideTab updatedBoard={setPaintingsState} />
       </main>
     </>
   );

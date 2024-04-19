@@ -1,11 +1,9 @@
 const Paintings = require("../models/painting");
 const Artists = require("../models/artist");
 
-//Sandro Boticelli  -  Boticeli
-
 exports.search = (req, res, next) => {
   let query = req.query.q.toLowerCase();
-  let paintingsResult, artistsResults;
+  let paintingsResult;
   let results = {
     paintings: [],
     artists: [],
@@ -30,45 +28,47 @@ exports.search = (req, res, next) => {
         throw error;
       }
 
-      artistsResults = artists;
-      let indexStr;
+      if (!artists.length && !paintingsResult.length) return results;
+
+      let index;
       let str;
       let indexQuery = 0;
       let matches = [];
       let imperfectMatch;
       let lastMatchLength = 0;
-      let lastStrIndex;
+      let lastIndex;
 
       for (let i = 0; i < paintingsResult.length; i++) {
-        indexStr = 0;
+        index = 0;
         str = paintingsResult[i].name.toLowerCase();
-        original = paintingsResult[i].originalName.toLowerCase();
+        originalName = paintingsResult[i].originalName.toLowerCase();
+
         indexQuery = 0;
         imperfectMatch = false;
         lastMatchLength = 0;
-        lastStrIndex = null;
+        lastIndex = null;
         matches = [];
 
         while (indexQuery < query.length) {
-          if (str[indexStr] == query[indexQuery]) {
-            matches.push(str[indexStr]);
+          if (str[index] == query[indexQuery]) {
+            matches.push(str[index]);
             indexQuery++;
-            indexStr++;
+            index++;
           } else {
             if (matches.length && !imperfectMatch) {
               lastMatchLength = matches.length;
-              lastStrIndex = indexStr;
+              lastIndex = index;
               imperfectMatch = true;
-              indexStr++;
+              index++;
             } else if (imperfectMatch) {
               if (matches.length - 2 >= lastMatchLength) break;
 
               matches = [];
               imperfectMatch = false;
               indexQuery = 0;
-              indexStr = lastStrIndex;
+              index = lastIndex;
             } else {
-              if (indexStr++ - str.length == query.length) break;
+              if (index++ - str.length == query.length) break;
               matches = [];
               indexQuery = 0;
             }
@@ -80,33 +80,33 @@ exports.search = (req, res, next) => {
           continue;
         }
 
-        indexStr = 0;
+        index = 0;
         indexQuery = 0;
         matches = [];
         imperfectMatch = false;
         lastMatchLength = 0;
-        lastStrIndex = null;
+        lastIndex = null;
 
         while (indexQuery < query.length) {
-          if (original[indexStr] == query[indexQuery]) {
-            matches.push(original[indexStr]);
+          if (originalName[index] == query[indexQuery]) {
+            matches.push(originalName[index]);
             indexQuery++;
-            indexStr++;
+            index++;
           } else {
             if (matches.length && !imperfectMatch) {
               lastMatchLength = matches.length;
-              lastStrIndex = indexStr;
+              lastIndex = index;
               imperfectMatch = true;
-              indexStr++;
+              index++;
             } else if (imperfectMatch) {
               if (matches.length - 2 >= lastMatchLength) break;
 
               matches = [];
               imperfectMatch = false;
               indexQuery = 0;
-              indexStr = lastStrIndex;
+              index = lastIndex;
             } else {
-              if (indexStr++ - original.length == query.length) break;
+              if (index++ - originalName.length == query.length) break;
               matches = [];
               indexQuery = 0;
             }
@@ -117,33 +117,33 @@ exports.search = (req, res, next) => {
       }
 
       for (let i = 0; i < artists.length; i++) {
-        indexStr = 0;
+        index = 0;
         str = artists[i].name.toLowerCase();
         indexQuery = 0;
         imperfectMatch = false;
         lastMatchLength = 0;
-        lastStrIndex = null;
+        lastIndex = null;
         matches = [];
 
         while (indexQuery < query.length) {
-          if (str[indexStr] == query[indexQuery]) {
-            matches.push(str[indexStr]);
+          if (str[index] == query[indexQuery]) {
+            matches.push(str[index]);
             indexQuery++;
-            indexStr++;
+            index++;
           } else {
             if (matches.length && !imperfectMatch) {
               lastMatchLength = matches.length;
-              lastStrIndex = indexStr;
+              lastIndex = index;
               imperfectMatch = true;
-              indexStr++;
+              index++;
             } else if (imperfectMatch) {
               if (matches.length - 2 >= lastMatchLength) break;
               matches = [];
               imperfectMatch = false;
               indexQuery = 0;
-              indexStr = lastStrIndex;
+              index = lastIndex;
             } else {
-              if (indexStr++ - str.length == query.length) break;
+              if (index++ - str.length == query.length) break;
               matches = [];
               indexQuery = 0;
             }

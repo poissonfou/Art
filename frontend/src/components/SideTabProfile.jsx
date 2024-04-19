@@ -3,25 +3,23 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import classes from "./SideTabProfile.module.css";
 
-let user = {
-  name: "",
-  email: "",
-};
-
 function SideTabProfile() {
-  const [userInfo, setUserInfo] = useState(user);
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    email: "",
+  });
   const [showTab, setShowTab] = useState(false);
   let [error, setError] = useState({ isError: false });
 
   const navigate = useNavigate();
-  let route = useLocation();
+  const ROUTE = useLocation();
+  const API_TOKEN = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
-      let token = localStorage.getItem("token");
       let user = await fetch("http://localhost:3000/user", {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${API_TOKEN}`,
         },
       });
 
@@ -36,19 +34,15 @@ function SideTabProfile() {
         return;
       }
 
-      user = await user.json();
+      const DATA = await user.json();
       setUserInfo((prevState) => {
         let newState = JSON.parse(JSON.stringify(prevState));
-        newState = user.user[0];
+        newState = DATA.user[0];
         return newState;
       });
     };
     fetchData();
   }, []);
-
-  function showProfile() {
-    setShowTab((prevState) => !prevState);
-  }
 
   function redirectUpdate() {
     if (error.isError) return;
@@ -63,9 +57,9 @@ function SideTabProfile() {
   return (
     <div
       className={`${classes.profile_tab} ${
-        route.pathname == "/profile" ? classes.static : classes.absolute
+        ROUTE.pathname == "/profile" ? classes.static : classes.absolute
       } ${showTab ? classes.show : ""} ${
-        route.pathname == "/profile" && window.innerWidth <= 700
+        ROUTE.pathname == "/profile" && window.innerWidth <= 700
           ? classes.adjust_profile
           : ""
       }`}
@@ -87,9 +81,9 @@ function SideTabProfile() {
 
       <div
         className={`${classes.mini_profile} ${
-          route.pathname == "/profile" ? classes.hidden : ""
+          ROUTE.pathname == "/profile" ? classes.hidden : ""
         }`}
-        onClick={showProfile}
+        onClick={() => setShowTab((prevState) => !prevState)}
       >
         <p>{!error.isError ? userInfo.name[0] : "!"}</p>
       </div>

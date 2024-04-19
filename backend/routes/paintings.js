@@ -9,7 +9,7 @@ router.get("/user", auth, paintingsController.getUserPaintings);
 
 router.get("/:paintingId", paintingsController.getPainting);
 
-router.post("/:paintingId", auth, paintingsController.savePaints);
+router.post("/:paintingId", auth, paintingsController.savePaintings);
 
 router.delete("/:paintingId", auth, paintingsController.deletePaintings);
 

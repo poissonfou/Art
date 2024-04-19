@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 import SideTabProfile from "../components/SideTabProfile";
@@ -6,60 +6,50 @@ import SideTab from "../components/SideTab";
 
 import classes from "./Search.module.css";
 
-let detailsInitial = {
-  set: false,
-  country: "",
-  year: "",
-  url: "",
-  originalName: "",
-  source: "",
-  artists: "",
-  name: "",
-  id: "",
-};
+import { paintingDetailsActions } from "../store";
 
 function Search() {
-  const search = useSelector((state) => state);
+  const SEARCH_RESULT = useSelector((state) => state.search);
+
   const [artistsPaintings, setArtistsPaintings] = useState({
     paintings: [],
     name: "",
   });
   const [showArtist, setShowArtist] = useState({ displayed: false, idx: -1 });
-  const [details, setDetails] = useState(detailsInitial);
+
+  const dispatch = useDispatch();
 
   function getDetails(info) {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      newState.set = true;
-      newState.country = info.country;
-      newState.year = info.year;
-      newState.url = info.url;
-      newState.originalName = info.originalName;
-      newState.source = info.source;
-      if (showArtist.displayed) {
-        newState.artists = [{ name: artistsPaintings.name }];
-      } else {
-        newState.artists = info.artists;
-      }
-      newState.name = info.name;
-      newState.id = info._id;
-      return newState;
-    });
+    let newPainting = {
+      country: info.country,
+      year: info.year,
+      url: info.url,
+      originalName: info.originalName,
+      source: info.source,
+      name: info.name,
+      id: info._id,
+    };
+
+    if (showArtist.displayed) {
+      newPainting.artists = [{ name: artistsPaintings.name }];
+    } else {
+      newPainting.artists = info.artists;
+    }
+
+    dispatch(
+      paintingDetailsActions.setPaintingDetails({ details: newPainting })
+    );
   }
 
   function closeTab() {
-    setDetails((prevDetails) => {
-      let newState = JSON.parse(JSON.stringify(prevDetails));
-      newState.set = false;
-      return newState;
-    });
+    dispatch(paintingDetailsActions.closeTab(false));
   }
 
-  async function getArtistsPaintings(index) {
+  function getArtistsPaintings(index) {
     setArtistsPaintings((prevState) => {
       let newState = JSON.parse(JSON.stringify(prevState));
-      newState.paintings = search.artists[index].paintings;
-      newState.name = search.artists[index].name;
+      newState.paintings = SEARCH_RESULT.artists[index].paintings;
+      newState.name = SEARCH_RESULT.artists[index].name;
       return newState;
     });
 
@@ -73,23 +63,23 @@ function Search() {
 
   useEffect(() => {
     closeTab();
-  }, [search]);
+  }, [SEARCH_RESULT]);
 
   return (
     <main>
       {localStorage.getItem("token") !== "null" && <SideTabProfile />}
-      {!search.artists.length && !search.paintings.length && (
+      {!SEARCH_RESULT.artists.length && !SEARCH_RESULT.paintings.length && (
         <div className={classes.no_result}>
           <h1>No Results</h1>
           <span className="material-symbols-outlined">cancel</span>
         </div>
       )}
       <div className={classes.search_display}>
-        {search.artists.length ? (
+        {SEARCH_RESULT.artists.length ? (
           <div className={classes.artists_display}>
             <h1>Artists</h1>
             <div className={classes.artists_items}>
-              {search.artists.map((artist, index) => {
+              {SEARCH_RESULT.artists.map((artist, index) => {
                 return (
                   <div
                     onClick={
@@ -132,7 +122,7 @@ function Search() {
               );
             })}
           {!showArtist.displayed &&
-            search.paintings.map((painting, index) => {
+            SEARCH_RESULT.paintings.map((painting, index) => {
               return (
                 <div
                   className={classes.img}
@@ -146,18 +136,7 @@ function Search() {
             })}
         </div>
       </div>
-      <SideTab
-        show={details.set}
-        url={details.url}
-        name={details.name}
-        originalName={details.originalName}
-        year={details.year}
-        artistsProp={details.artists}
-        country={details.country}
-        source={details.source}
-        paintingId={details.id}
-        closeTab={closeTab}
-      />
+      <SideTab />
     </main>
   );
 }

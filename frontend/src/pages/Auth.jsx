@@ -12,37 +12,37 @@ import Form from "../components/Form";
 import classes from "./Auth.module.css";
 
 let hasError = false;
+const INITIAL_AUTH = {
+  errors: {
+    name: false,
+    password: false,
+    isEqual: false,
+    email: false,
+    confirm: false,
+    emailLogin: false,
+    passwordLogin: false,
+  },
+  msg: {
+    name: "",
+    password: "",
+    isEqual: "",
+    email: "",
+    confirm: "",
+    emailLogin: "",
+    passwordLogin: "",
+  },
+};
 
 function Auth() {
   const [searchParams] = useSearchParams();
-  let query = searchParams.get("mode");
+  const MODE = searchParams.get("mode");
+
+  const [auth, setAuth] = useState(INITIAL_AUTH);
 
   let errorAction = useActionData();
-
   if (!errorAction) {
     errorAction = { isError: false };
   }
-
-  let [error, setError] = useState({
-    errors: {
-      name: false,
-      password: false,
-      isEqual: false,
-      email: false,
-      confirm: false,
-      emailLogin: false,
-      passwordLogin: false,
-    },
-    msg: {
-      name: "",
-      password: "",
-      isEqual: "",
-      email: "",
-      confirm: "",
-      emailLogin: "",
-      passwordLogin: "",
-    },
-  });
 
   let email = useRef("");
   let name = useRef("");
@@ -52,11 +52,13 @@ function Auth() {
   let passwordLogin = useRef("");
 
   function inputAuth(field) {
+    let message;
+
     if (field == "name") {
-      let nameInput = name.current.value.trim();
-      if (nameInput == "") {
+      const NAME_INPUT = name.current.value.trim();
+      if (NAME_INPUT == "") {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.name = true;
           newState.msg.name = "Please enter your name.";
@@ -67,24 +69,18 @@ function Auth() {
     }
 
     if (field == "email") {
-      let emailInput = email.current.value.trim();
-      if (emailInput == "") {
-        hasError = true;
-        setError((prevState) => {
-          let newState = JSON.parse(JSON.stringify(prevState));
-          newState.errors.email = true;
-          newState.msg.email = "Please enter your email.";
-          return newState;
-        });
-        return;
-      }
+      const EMAIL_INPUT = email.current.value.trim();
 
-      if (emailInput.indexOf("@") == -1) {
+      if (EMAIL_INPUT == "") message = "Please enter your email.";
+      if (EMAIL_INPUT.indexOf("@") == -1)
+        message = "Please enter a valid email.";
+
+      if (message) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.email = true;
-          newState.msg.email = "Please enter a valid email.";
+          newState.msg.email = message;
           return newState;
         });
         return;
@@ -92,24 +88,18 @@ function Auth() {
     }
 
     if (field == "emailLogin") {
-      let emailInput = emailLogin.current.value.trim();
-      if (emailInput == "") {
-        hasError = true;
-        setError((prevState) => {
-          let newState = JSON.parse(JSON.stringify(prevState));
-          newState.errors.emailLogin = true;
-          newState.msg.emailLogin = "Please enter your email.";
-          return newState;
-        });
-        return;
-      }
+      const EMAIL_LOGIN_INPUT = emailLogin.current.value.trim();
 
-      if (emailInput.indexOf("@") == -1) {
+      if (EMAIL_LOGIN_INPUT == "") message = "Please enter your email.";
+      if (EMAIL_LOGIN_INPUT.indexOf("@") == -1)
+        message = "Please enter a valid email.";
+
+      if (message) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.emailLogin = true;
-          newState.msg.emailLogin = "Please enter a valid email.";
+          newState.msg.emailLogin = message;
           return newState;
         });
         return;
@@ -117,13 +107,18 @@ function Auth() {
     }
 
     if (field == "password") {
-      let passwordInput = password.current.value.trim();
-      if (passwordInput == "") {
+      const PASSWORD_INPUT = password.current.value.trim();
+
+      if (PASSWORD_INPUT == "") message = "Please enter your password.";
+      if (PASSWORD_INPUT.length < 6)
+        message = "Password must be longer then six digits.";
+
+      if (message) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.password = true;
-          newState.msg.password = "Please enter your password.";
+          newState.msg.password = message;
           if (newState.errors.isEqual) {
             newState.erros.isEqual = false;
             newState.msg.isEqual = "";
@@ -133,24 +128,9 @@ function Auth() {
         return;
       }
 
-      if (passwordInput.length < 6) {
+      if (PASSWORD_INPUT !== confirm.current.value.trim()) {
         hasError = true;
-        setError((prevState) => {
-          let newState = JSON.parse(JSON.stringify(prevState));
-          newState.errors.password = true;
-          newState.msg.password = "Password must be longer then six digits.";
-          if (newState.errors.isEqual) {
-            newState.erros.isEqual = false;
-            newState.msg.isEqual = "";
-          }
-          return newState;
-        });
-        return;
-      }
-
-      if (passwordInput !== confirm.current.value.trim()) {
-        hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.isEqual = true;
           newState.msg.isEqual = "Passwords don't match";
@@ -165,10 +145,15 @@ function Auth() {
     }
 
     if (field == "passwordLogin") {
-      let passwordInput = passwordLogin.current.value.trim();
-      if (passwordInput == "") {
+      const PASSWORD_LOGIN_INPUT = passwordLogin.current.value.trim();
+
+      if (PASSWORD_LOGIN_INPUT == "") message = "Please enter your password.";
+      if (PASSWORD_LOGIN_INPUT.length < 6)
+        message = "Password must be longer then six digits.";
+
+      if (message) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.passwordLogin = true;
           newState.msg.passwordLogin = "Please enter your password.";
@@ -180,29 +165,18 @@ function Auth() {
         });
         return;
       }
-
-      if (passwordInput.length < 6) {
-        hasError = true;
-        setError((prevState) => {
-          let newState = JSON.parse(JSON.stringify(prevState));
-          newState.errors.passwordLogin = true;
-          newState.msg.passwordLogin =
-            "Password must be longer then six digits.";
-          if (newState.errors.isEqual) {
-            newState.erros.isEqual = false;
-            newState.msg.isEqual = "";
-          }
-          return newState;
-        });
-        return;
-      }
     }
 
     if (field == "confirm") {
-      let confirmInput = confirm.current.value.trim();
-      if (confirmInput == "") {
+      const CONFIRM_INPUT = confirm.current.value.trim();
+
+      if (CONFIRM_INPUT == "") message = "Please enter your password.";
+      if (CONFIRM_INPUT.length < 6)
+        message = "Password must be longer then six digits.";
+
+      if (message) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.confirm = true;
           newState.msg.confirm = "Please confirm your password.";
@@ -215,9 +189,9 @@ function Auth() {
         return;
       }
 
-      if (confirmInput !== password.current.value.trim()) {
+      if (CONFIRM_INPUT !== password.current.value.trim()) {
         hasError = true;
-        setError((prevState) => {
+        setAuth((prevState) => {
           let newState = JSON.parse(JSON.stringify(prevState));
           newState.errors.isEqual = true;
           newState.msg.isEqual = "Passwords don't match";
@@ -229,46 +203,12 @@ function Auth() {
         });
         return;
       }
-
-      if (confirmInput.length < 6) {
-        hasError = true;
-        setError((prevState) => {
-          let newState = JSON.parse(JSON.stringify(prevState));
-          newState.errors.confirm = true;
-          newState.msg.confirm = "Password must be longer then six digits.";
-          if (newState.errors.isEqual) {
-            newState.erros.isEqual = false;
-            newState.msg.isEqual = "";
-          }
-          return newState;
-        });
-        return;
-      }
     }
 
     if (hasError) {
-      setError((prevState) => {
+      setAuth((prevState) => {
         let newState = JSON.parse(JSON.stringify(prevState));
-        newState = {
-          errors: {
-            name: false,
-            password: false,
-            isEqual: false,
-            email: false,
-            confirm: false,
-            emailLogin: false,
-            passwordLogin: false,
-          },
-          msg: {
-            name: "",
-            password: "",
-            isEqual: "",
-            email: "",
-            confirm: "",
-            emailLogin: false,
-            passwordLogin: false,
-          },
-        };
+        newState = INITIAL_AUTH;
         return newState;
       });
     }
@@ -278,7 +218,7 @@ function Auth() {
 
   return (
     <>
-      {query == "signup" ? (
+      {MODE == "signup" ? (
         <main className={classes.main_signup}>
           <Form>
             <h1>Signup</h1>
@@ -290,11 +230,11 @@ function Auth() {
                 name="name"
                 ref={name}
                 onBlur={() => inputAuth("name")}
-                className={error.errors.name ? classes.error : ""}
+                className={auth.errors.name ? classes.error : ""}
               />
             </div>
-            {error.errors.name && (
-              <p className={classes.error_msg}>{error.msg.name}</p>
+            {auth.errors.name && (
+              <p className={classes.error_msg}>{auth.msg.name}</p>
             )}
             <div>
               <label htmlFor="email">Email</label>
@@ -303,10 +243,10 @@ function Auth() {
                 ref={email}
                 name="email"
                 onBlur={() => inputAuth("email")}
-                className={error.errors.email ? classes.error : ""}
+                className={auth.errors.email ? classes.error : ""}
               />
-              {error.errors.email && (
-                <p className={classes.error_msg}>{error.msg.email}</p>
+              {auth.errors.email && (
+                <p className={classes.error_msg}>{auth.msg.email}</p>
               )}
             </div>
             <div>
@@ -316,15 +256,15 @@ function Auth() {
                 ref={password}
                 name="password"
                 onBlur={() => inputAuth("password")}
-                className={`${error.errors.password ? classes.error : ""} ${
-                  error.errors.isEqual ? classes.error : ""
+                className={`${auth.errors.password ? classes.error : ""} ${
+                  auth.errors.isEqual ? classes.error : ""
                 }`}
               />
-              {error.errors.password && (
-                <p className={classes.error_msg}>{error.msg.password}</p>
+              {auth.errors.password && (
+                <p className={classes.error_msg}>{auth.msg.password}</p>
               )}
-              {error.errors.isEqual && (
-                <p className={classes.error_msg}>{error.msg.isEqual}</p>
+              {auth.errors.isEqual && (
+                <p className={classes.error_msg}>{auth.msg.isEqual}</p>
               )}
             </div>
             <div>
@@ -334,15 +274,15 @@ function Auth() {
                 ref={confirm}
                 name="confirm"
                 onBlur={() => inputAuth("confirm")}
-                className={`${error.errors.confirm ? classes.error : ""} ${
-                  error.errors.isEqual ? classes.error : ""
+                className={`${auth.errors.confirm ? classes.error : ""} ${
+                  auth.errors.isEqual ? classes.error : ""
                 }`}
               />
-              {error.errors.confirm && (
-                <p className={classes.error_msg}>{error.msg.confirm}</p>
+              {auth.errors.confirm && (
+                <p className={classes.error_msg}>{auth.msg.confirm}</p>
               )}
-              {error.errors.isEqual && (
-                <p className={classes.error_msg}>{error.msg.isEqual}</p>
+              {auth.errors.isEqual && (
+                <p className={classes.error_msg}>{auth.msg.isEqual}</p>
               )}
             </div>
             <button type="submit">Signup</button>
@@ -362,10 +302,10 @@ function Auth() {
                 ref={emailLogin}
                 name="emailLogin"
                 onBlur={() => inputAuth("emailLogin")}
-                className={error.errors.emailLogin ? classes.error : ""}
+                className={auth.errors.emailLogin ? classes.error : ""}
               />
-              {error.errors.emailLogin && (
-                <p className={classes.error_msg}>{error.msg.emailLogin}</p>
+              {auth.errors.emailLogin && (
+                <p className={classes.error_msg}>{auth.msg.emailLogin}</p>
               )}
             </div>
             <div>
@@ -375,10 +315,10 @@ function Auth() {
                 ref={passwordLogin}
                 name="passwordLogin"
                 onBlur={() => inputAuth("passwordLogin")}
-                className={error.errors.passwordLogin ? classes.error : ""}
+                className={auth.errors.passwordLogin ? classes.error : ""}
               />
-              {error.errors.passwordLogin && (
-                <p className={classes.error_msg}>{error.msg.passwordLogin}</p>
+              {auth.errors.passwordLogin && (
+                <p className={classes.error_msg}>{auth.msg.passwordLogin}</p>
               )}
             </div>
             <p>
@@ -399,10 +339,10 @@ export async function action({ request }) {
   const searchParams = new URL(request.url).searchParams;
 
   if (searchParams.get("mode") == "login") {
-    const data = await request.formData();
+    const INPUT_DATA = await request.formData();
 
-    let email = data.get("emailLogin").trim();
-    let password = data.get("passwordLogin").trim();
+    const email = INPUT_DATA.get("emailLogin").trim();
+    const password = INPUT_DATA.get("passwordLogin").trim();
 
     const formData = {
       email,
@@ -422,9 +362,9 @@ export async function action({ request }) {
       return { isError: true, message: error.message };
     }
 
-    let userData = await response.json();
+    const USER_DATA = await response.json();
 
-    localStorage.setItem("token", userData.token);
+    localStorage.setItem("token", USER_DATA.token);
 
     setTimeout(() => {
       localStorage.setItem("token", null);
@@ -434,12 +374,12 @@ export async function action({ request }) {
 
     return redirect("/board");
   } else {
-    const data = await request.formData();
+    const INPUT_DATA = await request.formData();
 
-    let name = data.get("name").trim();
-    let email = data.get("email").trim();
-    let password = data.get("password").trim();
-    let confirm = data.get("confirm").trim();
+    const name = INPUT_DATA.get("name").trim();
+    const email = INPUT_DATA.get("email").trim();
+    const password = INPUT_DATA.get("password").trim();
+    const confirm = INPUT_DATA.get("confirm").trim();
 
     const formData = {
       email,

@@ -18,7 +18,9 @@ function Popup({ message, redirect }) {
       <div className={classes.popup}>
         <h1>Error</h1>
         <p>{message}</p>
-        <button onClick={() => redirect(redirect)}>Reload</button>
+        <div>
+          <button onClick={() => redirect(redirect)}>Reload</button>
+        </div>
       </div>
     </div>
   );

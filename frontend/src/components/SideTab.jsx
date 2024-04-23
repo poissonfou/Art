@@ -145,9 +145,9 @@ function SideTab({ updatedBoard }) {
 
   return (
     <div
-      className={`${classes.tab_container} ${
-        ROUTE.pathname == "/profile" ? classes.static : classes.absolute
-      } ${PAINTING_DETAILS.showTab ? classes.show : ""}`}
+      className={`${classes.tab_container} ${classes.absolute} ${
+        PAINTING_DETAILS.showTab ? classes.show : ""
+      }`}
     >
       <span
         className={`${"material-symbols-outlined"} ${classes.close}`}

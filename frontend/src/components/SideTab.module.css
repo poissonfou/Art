@@ -1,4 +1,5 @@
 .tab_container {
+  position: fixed;
   display: flex;
   flex-direction: column;
   height: 31em;
@@ -10,6 +11,8 @@
   transition: transform 1s;
   overflow-y: scroll;
   overflow-x: hidden;
+  top: 5em;
+  right: 0em;
 }
 
 @media (max-width: 1100px) {
@@ -21,12 +24,13 @@
 @media (max-width: 800px) {
   .tab_container {
     width: 15em;
+    top: 4.5em;
   }
 }
 
 @media (max-width: 700px) {
   .tab_container {
-    width: 12em;
+    width: 15em;
   }
 }
 
@@ -42,20 +46,6 @@
 .tab_container::-webkit-scrollbar-thumb {
   background: #242323;
   border-radius: 5px;
-}
-
-.absolute {
-  position: absolute;
-  z-index: 5;
-  top: 5em;
-  right: 0em;
-}
-
-.static {
-  position: absolute;
-  z-index: 5;
-  top: 5.5em;
-  right: 0em;
 }
 
 .close {
@@ -96,13 +86,6 @@
 @media (max-width: 1100px) {
   .tab_container img {
     width: 15em;
-    height: 15em;
-  }
-}
-
-@media (max-width: 700px) {
-  .tab_container img {
-    width: 12em;
     height: 15em;
   }
 }

@@ -2,12 +2,21 @@ body {
   background-color: rgb(15, 13, 13);
 }
 
+.hide_overflow_mobile {
+  overflow-x: hidden;
+  position: absolute;
+}
+
 .y_scroll {
   overflow-x: hidden;
 }
 
 .no_scroll {
   overflow: hidden;
+}
+
+#wrapper {
+  width: 100%;
 }
 
 * {

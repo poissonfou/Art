@@ -17,7 +17,19 @@ function Search() {
   });
   const [showArtist, setShowArtist] = useState({ displayed: false, idx: -1 });
 
+  let showTab = window.innerWidth > 500;
+  let [showProfileTab, setShowProfileTab] = useState(showTab);
+
   const dispatch = useDispatch();
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth < 500 && showProfileTab) {
+      setShowProfileTab(false);
+    }
+    if (window.innerWidth > 500 && !showProfileTab) {
+      setShowProfileTab(true);
+    }
+  });
 
   function getDetails(info) {
     let newPainting = {
@@ -67,7 +79,9 @@ function Search() {
 
   return (
     <main>
-      {localStorage.getItem("token") !== "null" && <SideTabProfile />}
+      {localStorage.getItem("token") !== "null" && showProfileTab && (
+        <SideTabProfile />
+      )}
       {!SEARCH_RESULT.artists.length && !SEARCH_RESULT.paintings.length && (
         <div className={classes.no_result}>
           <h1>No Results</h1>

@@ -6,6 +6,7 @@ import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
 import Form from "../components/Form";
 import Popup from "../components/Popup";
+import CollectionItem from "../components/CollectionItems";
 
 import { paintingDetailsActions } from "../store";
 
@@ -18,6 +19,31 @@ function Profile() {
   let actionData = useActionData();
   const dispatch = useDispatch();
   const API_TOKEN = localStorage.getItem("token");
+
+  let showTab = window.innerWidth < 500;
+  let repositionCollectionDisplay = window.innerWidth < 800;
+  let [showProfileTab, setShowProfileTab] = useState(showTab);
+  let [repositionCollection, setRepositionCollection] = useState(
+    repositionCollectionDisplay
+  );
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 500 && showProfileTab) {
+      setShowProfileTab(false);
+    }
+
+    if (window.innerWidth < 500 && !showProfileTab) {
+      setShowProfileTab(true);
+    }
+
+    if (window.innerWidth > 900 && repositionCollection) {
+      setRepositionCollection(false);
+    }
+
+    if (window.innerWidth < 900 && !repositionCollection) {
+      setRepositionCollection(true);
+    }
+  });
 
   const [paintingsData, setPaintingsData] = useState({
     paintings: userPaintings.paintings,
@@ -257,7 +283,7 @@ function Profile() {
         <Popup message={error.message} redirect={error.redirect} />
       )}
       <main className={classes.container}>
-        <SideTabProfile />
+        {!showProfileTab && <SideTabProfile />}
         <div className={classes.middle_section}>
           <div className={classes.collections}>
             <h2>Collections</h2>
@@ -292,6 +318,21 @@ function Profile() {
                 </span>
               )}
             </div>
+            {collectionsData.displayingDetails && repositionCollection && (
+              <CollectionItem
+                userActions={userActions}
+                collectionsData={collectionsData}
+                setUserActions={setUserActions}
+                updateCollectionItem={updateCollectionItem}
+                deleteCollection={deleteCollection}
+                getDetails={getDetails}
+                selectPainting={selectPainting}
+                paintingsData={paintingsData}
+                setCollectionsData={setCollectionsData}
+                error={error}
+                displayClose={false}
+              />
+            )}
           </div>
           <div className={classes.main}>
             {userActions.create && (
@@ -340,98 +381,21 @@ function Profile() {
             </div>
           </div>
         </div>
-        {collectionsData.displayingDetails && (
+        {collectionsData.displayingDetails && !repositionCollection && (
           <div className={classes.collection_display}>
-            <span
-              className="material-symbols-outlined"
-              onClick={() =>
-                setCollectionsData((prevState) => {
-                  let newState = JSON.parse(JSON.stringify(prevState));
-                  newState.displayingDetails = false;
-                  return newState;
-                })
-              }
-            >
-              close
-            </span>
-            <h1>{collectionsData.selectedCollection.name}</h1>
-            <div className={classes.collections_actions}>
-              <button
-                onClick={
-                  !userActions.update
-                    ? () =>
-                        setUserActions((prevState) => {
-                          let newState = JSON.parse(JSON.stringify(prevState));
-                          newState.update = !newState.update;
-                          return newState;
-                        })
-                    : () =>
-                        updateCollectionItem(
-                          collectionsData.selectedCollection,
-                          false
-                        )
-                }
-                className={userActions.update ? classes.highlight_button : ""}
-              >
-                Add
-              </button>
-              <button
-                onClick={
-                  !userActions.delete
-                    ? () =>
-                        setUserActions((prevState) => {
-                          let newState = JSON.parse(JSON.stringify(prevState));
-                          newState.delete = !newState.delete;
-                          return newState;
-                        })
-                    : () =>
-                        updateCollectionItem(
-                          collectionsData.selectedCollection,
-                          true
-                        )
-                }
-                className={userActions.delete ? classes.highlight_button : ""}
-              >
-                Remove
-              </button>
-              <button
-                onClick={() =>
-                  deleteCollection(collectionsData.selectedCollection)
-                }
-              >
-                Delete
-              </button>
-            </div>
-            {error.isError && <p>{error.message}</p>}
-            <div className={classes.collection_items_display}>
-              {collectionsData.selectedCollection.paintings.map(
-                (painting, index) => {
-                  return (
-                    <div
-                      className={`${classes.collection_img} ${
-                        userActions.delete &&
-                        paintingsData.selectedPaintings[painting._id]
-                          ? classes.selected
-                          : classes.border
-                      }`}
-                      key={index}
-                      title={painting.name}
-                      onClick={
-                        !userActions.delete
-                          ? () => getDetails(painting, true)
-                          : () => selectPainting(painting)
-                      }
-                    >
-                      <img
-                        src={painting.url}
-                        alt="paintings"
-                        id={painting._id}
-                      />
-                    </div>
-                  );
-                }
-              )}
-            </div>
+            <CollectionItem
+              userActions={userActions}
+              collectionsData={collectionsData}
+              setUserActions={setUserActions}
+              updateCollectionItem={updateCollectionItem}
+              deleteCollection={deleteCollection}
+              getDetails={getDetails}
+              selectPainting={selectPainting}
+              paintingsData={paintingsData}
+              setCollectionsData={setCollectionsData}
+              error={error}
+              displayClose={true}
+            />
           </div>
         )}
         <SideTab updatedBoard={setPaintingsData} />

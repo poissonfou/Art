@@ -1,5 +1,6 @@
 import { useLoaderData } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 
 import SideTab from "../components/SideTab";
 import SideTabProfile from "../components/SideTabProfile";
@@ -12,11 +13,26 @@ import { paintingDetailsActions } from "../store";
 function Board() {
   const paintings = useLoaderData();
   const dispatch = useDispatch();
+  const IS_TOUCH_SCREEN = "ontouchmove" in window;
+
+  const showTab = window.innerWidth > 500;
+  const [showProfileTab, setShowProfileTab] = useState(showTab);
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth < 500 && showProfileTab) {
+      setShowProfileTab(false);
+    }
+    if (window.innerWidth > 500 && !showProfileTab) {
+      setShowProfileTab(true);
+    }
+  });
 
   function moveDisplay(event) {
     let display = document.getElementById("display");
-    let x = event.clientX;
-    let y = event.clientY;
+    let x, y;
+
+    x = event.clientX;
+    y = event.clientY;
 
     let xDecimal = x / window.innerWidth;
     let yDecimal = y / window.innerHeight;
@@ -62,9 +78,13 @@ function Board() {
         <Popup message={paintings.message} redirect={paintings.redirect} />
       )}
       <main className={classes.main}>
-        {localStorage.getItem("token") !== "null" && <SideTabProfile />}
+        {localStorage.getItem("token") !== "null" && showProfileTab && (
+          <SideTabProfile />
+        )}
         <div
-          className={classes.main_board}
+          className={
+            !IS_TOUCH_SCREEN ? classes.main_board : classes.main_board_mobile
+          }
           onMouseMove={moveDisplay}
           id="display"
         >

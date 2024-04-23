@@ -4,6 +4,7 @@
   height: 31.1em;
   color: white;
   padding: 1em;
+  margin-top: 5em;
 }
 
 .tab_actions {
@@ -12,24 +13,18 @@
   align-items: start;
 }
 
-@media (max-width: 800px) {
-  .adjust_profile {
-    width: 10em;
-    height: 31.1em;
-  }
+.adjust_profile {
+  width: 10em;
+  top: 15em;
 }
 
-.absolute {
-  position: absolute;
+.fixed {
+  position: fixed;
   left: 0;
-  top: 5.2em;
+  top: 0em;
   transform: translateX(-17em);
   transition: transform 1s;
   z-index: 5;
-}
-
-.static {
-  margin-top: 4.7em;
 }
 
 .profile_tab p:first-child,

@@ -17,6 +17,8 @@ function Layout() {
   const [prevLoc, setPrevLoc] = useState("");
   let location = useLocation();
   let navigate = useNavigate();
+  const API_TOKEN = localStorage.getItem("token");
+  const IS_MOBILE = "ontouchmove" in window;
 
   useEffect(() => {
     setPrevLoc(location.pathname);
@@ -30,24 +32,29 @@ function Layout() {
     setProgress(false);
   }, [prevLoc]);
 
-  let route = useLocation();
-
-  if (
-    route.pathname == "/profile" ||
-    route.pathname == "/board" ||
-    route.pathname == "/search"
-  ) {
-    document.getElementsByTagName("body")[0].classList = "no_scroll";
+  if (location.pathname == "/board" || location.pathname == "/search") {
+    if (!IS_MOBILE) {
+      document.getElementsByTagName("body")[0].classList = "no_scroll";
+    } else {
+      document.getElementById("wrapper").classList = "hide_overflow_mobile";
+    }
   } else {
     document.getElementsByTagName("body")[0].classList = "";
+    document.getElementById("wrapper").classList = "";
+  }
+
+  if (location.pathname == "/profile") {
+    if (!IS_MOBILE) {
+      document.getElementsByTagName("body")[0].classList = "y_scroll";
+    } else {
+      document.getElementById("wrapper").classList = "hide_overflow_mobile";
+    }
   }
 
   async function checkToken() {
-    let token = localStorage.getItem("token");
-
     let response = await fetch("http://localhost:3000/user", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${API_TOKEN}`,
       },
     });
 
@@ -58,17 +65,14 @@ function Layout() {
     }
   }
 
-  if (
-    localStorage.getItem("token") &&
-    localStorage.getItem("token") !== "null"
-  ) {
+  if (API_TOKEN && API_TOKEN !== "null") {
     checkToken();
   }
 
   return (
     <>
       {progress && <TopBarProgress />}
-      <Header />
+      <Header key={prevLoc} />
       <Outlet />
     </>
   );

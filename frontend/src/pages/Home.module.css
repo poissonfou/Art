@@ -40,6 +40,12 @@
   }
 }
 
+@media (max-width: 550px) {
+  .hero_text h1 {
+    font-size: 2rem;
+  }
+}
+
 .hero_text {
   width: 100%;
   text-align: center;
@@ -204,6 +210,13 @@
 .collections_info div:last-child,
 .details div {
   width: 60%;
+}
+
+@media (max-width: 550px) {
+  .collections_info div:last-child,
+  .details div {
+    width: 75%;
+  }
 }
 
 .collections_info h1,

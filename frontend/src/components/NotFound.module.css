@@ -29,3 +29,13 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+@media (max-width: 700px) {
+  .not_found h1 {
+    font-size: 2rem;
+  }
+
+  .not_found span {
+    font-size: 3rem;
+  }
+}

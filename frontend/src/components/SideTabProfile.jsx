@@ -57,7 +57,7 @@ function SideTabProfile() {
   return (
     <div
       className={`${classes.profile_tab} ${
-        ROUTE.pathname == "/profile" ? classes.static : classes.absolute
+        ROUTE.pathname !== "/profile" && classes.fixed
       } ${showTab ? classes.show : ""} ${
         ROUTE.pathname == "/profile" && window.innerWidth <= 700
           ? classes.adjust_profile
